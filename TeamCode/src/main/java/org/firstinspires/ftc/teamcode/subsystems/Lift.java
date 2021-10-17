@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+
+/*package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc11392.sequoia.subsystem.PIDFSubsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
@@ -12,6 +13,9 @@ import com.qualcomm.robotcore.util.Range;
 public class Lift extends PIDFSubsystem {
     private DcMotorEx lift;
 
+    static final double LIFT_MAX=100;
+    static final double LIFT_MIN=0;
+
     public Lift() {
         super(new PIDFController(1, 1, 1));
     }
@@ -19,7 +23,6 @@ public class Lift extends PIDFSubsystem {
     @Override
     protected void useOutput(double output) {
         lift.setPower(Range.clip(output, -1, 1));
-
     }
 
     @Override
@@ -30,8 +33,13 @@ public class Lift extends PIDFSubsystem {
     @Override
     public void initialize(HardwareMap hardwareMap) {
         this.lift=hardwareMap.get(DcMotorEx.class, "lift");
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+    }
+
+    public void setpoint(double setpoint) {
+        this ;
     }
 
     @Override
@@ -46,3 +54,4 @@ public class Lift extends PIDFSubsystem {
 
     }
 }
+*/
