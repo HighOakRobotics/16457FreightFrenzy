@@ -43,7 +43,7 @@ public class Rotator extends Subsystem {
 
     @Override
     public void runPeriodic() {
-        rotator.setVelocity(2 * Math.PI * ratio, AngleUnit.RADIANS);
+        rotator.setVelocity(2 * Math.PI * ratio * setpoint, AngleUnit.RADIANS);
     }
 
     @Override

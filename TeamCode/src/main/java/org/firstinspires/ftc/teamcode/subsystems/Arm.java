@@ -18,12 +18,13 @@ public class Arm extends Subsystem {
     // MAGIC
     double[] kArmH = {-0.00914442238794, 0.321261633047, -3.0919162105, -62.3691118109, 3883.42569027};
     double[] kWristH = {0.000811713368041, -0.0282206891393, 0.290243892411, 5.84456287387, -278.301815978};
-    double[] kArmV;
-    double[] kWristV;
-    int kArmMin = 0;
-    int kArmMax;
-    int kWristMin;
-    int kWristMax;
+    //more magic
+    double[] kArmV={-0.00403961044806,0.0462405085444,-0.4377148918,-60.3767064186,3378.86017533};
+    double[] kWristV={0.00322737462992,-0.0863502618213,0.894681801453,2.32437048804,-94.9712215617};
+    int kArmMin = -100000;
+    int kArmMax = 100000;
+    int kWristMin = -100000;
+    int kWristMax = 100000;
 
     int armHome;
     int wristHome;
@@ -79,15 +80,16 @@ public class Arm extends Subsystem {
     @Override
     public void start() {
         arm.setPower(1);
-        wrist.setPower(1);
+        wrist.setPower(0.5);
     }
 
     @Override
     public void runPeriodic() {
+        telemetry.addData("armMode", mode);
         telemetry.addData("armC", arm.getCurrentPosition());
         telemetry.addData("wristC", wrist.getCurrentPosition());
-        telemetry.addData("armT", apply(setpoint, kArmH));
-        telemetry.addData("wristT", apply(setpoint, kWristH));
+        telemetry.addData("armT", arm.getTargetPosition());
+        telemetry.addData("wristT", wrist.getTargetPosition());
 
         switch (mode) {
             case HORIZONTAL:
