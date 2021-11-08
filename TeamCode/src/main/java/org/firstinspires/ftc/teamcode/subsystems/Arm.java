@@ -8,33 +8,32 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 public class Arm extends Subsystem {
-
-    PIDFController armController;
-    PIDFController wristController;
     DcMotorEx arm;
     DcMotorEx wrist;
     double setpoint;
+    double setpointTarget;
     ArmMode mode;
     // MAGIC
     double[] kArmH = {-0.00914442238794, 0.321261633047, -3.0919162105, -62.3691118109, 3883.42569027};
     double[] kWristH = {0.000811713368041, -0.0282206891393, 0.290243892411, 5.84456287387, -278.301815978};
+    double kSetpointMinH = 0;
+    double kSetpointMaxH = 24;
     //more magic
-    double[] kArmV={-0.00403961044806,0.0462405085444,-0.4377148918,-60.3767064186,3378.86017533};
-    double[] kWristV={0.00322737462992,-0.0863502618213,0.894681801453,2.32437048804,-94.9712215617};
-    int kArmMin = -100000;
-    int kArmMax = 100000;
-    int kWristMin = -100000;
-    int kWristMax = 100000;
+    double[] kArmV = {-0.00403961044806, 0.0462405085444, -0.4377148918, -60.3767064186, 3378.86017533};
+    double[] kWristV = {0.00322737462992, -0.0863502618213, 0.894681801453, 2.32437048804, -94.9712215617};
+    double kSetpointMinV = 0;
+    double kSetpointMaxV = 12.5;
+    //Physical limits
+    int kArmMin = 0;
+    int kArmMax = 3964;
+    int kWristMin = -405;
+    int kWristMax = 10;
 
     int armHome;
     int wristHome;
 
-    public double getSetpoint() {
-        return setpoint;
-    }
-
-    public void setSetpoint(double setpoint) {
-        this.setpoint = setpoint;
+    public void modifySetpoint(double amount) {
+        setpointTarget = setpoint + amount;
     }
 
     public ArmMode getMode() {
@@ -85,26 +84,34 @@ public class Arm extends Subsystem {
 
     @Override
     public void runPeriodic() {
-        telemetry.addData("armMode", mode);
-        telemetry.addData("armC", arm.getCurrentPosition());
-        telemetry.addData("wristC", wrist.getCurrentPosition());
-        telemetry.addData("armT", arm.getTargetPosition());
-        telemetry.addData("wristT", wrist.getTargetPosition());
-
+        double armTarget = 0.0;
+        double wristTarget = 0.0;
         switch (mode) {
             case HORIZONTAL:
-                arm.setTargetPosition(Range.clip((int) Math.round(apply(setpoint, kArmH)), kArmMin, kArmMax));
-                wrist.setTargetPosition(Range.clip((int) Math.round(apply(setpoint, kWristH)), kWristMin, kWristMax));
+                setpoint = Range.clip(setpoint, kSetpointMinH, kSetpointMaxH);
+                armTarget = apply(setpoint, kArmH);
+                wristTarget = apply(setpoint, kWristH);
                 break;
             case VERTICAL:
-                arm.setTargetPosition(Range.clip((int) Math.round(apply(setpoint, kArmV)), kArmMin, kArmMax));
-                wrist.setTargetPosition(Range.clip((int) Math.round(apply(setpoint, kWristV)), kWristMin, kWristMax));
+                setpoint = Range.clip(setpoint, kSetpointMinV, kSetpointMaxV);
+                armTarget = apply(setpoint, kArmV);
+                wristTarget = apply(setpoint, kWristV);
                 break;
             case HOME:
-                arm.setTargetPosition(Range.clip(armHome, kArmMin, kArmMax));
-                wrist.setTargetPosition(Range.clip(wristHome, kWristMin, kWristMax));
+                armTarget = armHome;
+                wristTarget = wristHome;
                 break;
         }
+
+        arm.setTargetPosition(Range.clip((int) Math.round(armTarget), kArmMin, kArmMax));
+        wrist.setTargetPosition(Range.clip((int) Math.round(wristTarget), kWristMin, kWristMax));
+
+        setpoint = (setpointTarget + setpoint) / 2;
+
+        telemetry.addData("armMode", mode);
+        telemetry.addData("armC", "%d %d", arm.getCurrentPosition(), wrist.getCurrentPosition());
+        telemetry.addData("armT", "%f.0 %f.0", armTarget, wristTarget);
+        telemetry.addData("armP", "%f.0 %f.0", arm.getPower(), wrist.getPower());
     }
 
     @Override

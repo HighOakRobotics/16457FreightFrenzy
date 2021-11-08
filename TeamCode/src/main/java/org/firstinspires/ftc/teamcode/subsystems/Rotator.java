@@ -26,7 +26,7 @@ public class Rotator extends Subsystem {
         rotator = hardwareMap.get(DcMotorEx.class, "rotator");
         rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rotator.setVelocity(0, AngleUnit.RADIANS);
+        rotator.setVelocity(0, AngleUnit.DEGREES);
 
         setpoint = 0;
     }
@@ -43,7 +43,7 @@ public class Rotator extends Subsystem {
 
     @Override
     public void runPeriodic() {
-        rotator.setVelocity(2 * Math.PI * ratio * setpoint, AngleUnit.RADIANS);
+        rotator.setVelocity( ratio * setpoint, AngleUnit.DEGREES);
     }
 
     @Override
