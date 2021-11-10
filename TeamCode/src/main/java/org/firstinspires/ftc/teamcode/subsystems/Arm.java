@@ -5,7 +5,14 @@ import com.ftc11392.sequoia.util.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
+
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math3.analysis.solvers.NewtonRaphsonSolver;
+import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
 
 public class Arm extends Subsystem {
     DcMotorEx arm;
@@ -33,7 +40,27 @@ public class Arm extends Subsystem {
     int wristHome;
 
     public void modifySetpoint(double amount) {
-        setpointTarget = setpoint + amount;
+        double[] kArm;
+        double min, max;
+        switch (mode) {
+            case VERTICAL:
+                kArm = kArmV;
+                min = kSetpointMinV;
+                max = kSetpointMaxV;
+                break;
+            case HORIZONTAL:
+                kArm = kArmH;
+                min = kSetpointMinH;
+                max = kSetpointMaxH;
+                break;
+            default:
+                return;
+        }
+        kArm[kArm.length - 1] = kArm[kArm.length - 1] - arm.getCurrentPosition();
+        PolynomialFunction poly = new PolynomialFunction(kArm);
+        PolynomialSolver solver = new LaguerreSolver();
+        double currheight = solver.solve(10, poly, setpoint);
+        setpointTarget = currheight + amount;
     }
 
     public ArmMode getMode() {
@@ -57,6 +84,12 @@ public class Arm extends Subsystem {
         wrist.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION,
+                new PIDFCoefficients(10, 0, 0, 0));
+        wrist.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION,
+                new PIDFCoefficients(20, 0, 0, 0));
+
         armHome = arm.getCurrentPosition();
         wristHome = wrist.getCurrentPosition();
 
@@ -103,15 +136,19 @@ public class Arm extends Subsystem {
                 break;
         }
 
+        // Rough limit compensation to prevent jamming wrist against the ground
+        if (wrist.getCurrentPosition() > -150 && arm.getCurrentPosition() > 3200 && mode == ArmMode.HORIZONTAL)
+            armTarget = kArmV[kArmV.length - 1];
         arm.setTargetPosition(Range.clip((int) Math.round(armTarget), kArmMin, kArmMax));
         wrist.setTargetPosition(Range.clip((int) Math.round(wristTarget), kWristMin, kWristMax));
 
-        setpoint = (setpointTarget + setpoint) / 2;
+        setpoint = (setpointTarget - setpoint) / 2 + setpoint;
 
-        telemetry.addData("armMode", mode);
-        telemetry.addData("armC", "%d %d", arm.getCurrentPosition(), wrist.getCurrentPosition());
-        telemetry.addData("armT", "%f.0 %f.0", armTarget, wristTarget);
-        telemetry.addData("armP", "%f.0 %f.0", arm.getPower(), wrist.getPower());
+        telemetry.addLine("[ARM]")
+                .addData("Mode", mode)
+                .addData("Current", "a:%d w:%d", arm.getCurrentPosition(), wrist.getCurrentPosition())
+                .addData("Target", "a:%f.0 w:%f.0", armTarget, wristTarget)
+                .addData("Power", "a:%f.0 w:%f.0", arm.getPower(), wrist.getPower());
     }
 
     @Override
