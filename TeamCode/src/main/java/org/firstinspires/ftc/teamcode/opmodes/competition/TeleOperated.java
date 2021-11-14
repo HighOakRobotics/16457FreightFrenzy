@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 import android.os.Build;
 
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp(name = "MecanumDrive", group = "not quackology")
-public class MecanumDrive extends SequoiaOpMode {
+@TeleOp(name = "TeleOp", group = "Working Title")
+public class TeleOperated extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
     private final Arm arm = new Arm();
     private final Rotator rotator = new Rotator();
@@ -39,8 +39,8 @@ public class MecanumDrive extends SequoiaOpMode {
             gripper.setState(Gripper.GripperState.CLOSED);
         }));
 
-        gamepad1H.upButton().whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75)));
-        gamepad1H.downButton().whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75)));
+        gamepad1H.leftTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75 * gamepad1.left_trigger)));
+        gamepad1H.rightTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75 * gamepad1.right_trigger)));
 
         AtomicInteger rotationdir = new AtomicInteger(1);
         gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> {

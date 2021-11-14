@@ -189,8 +189,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -224,7 +224,7 @@ public class DriveTrainMecanum extends MecanumDrive {
         double v2 = d - s + t;
         double v3 = d + s + t;
 
-        setMotorPowers(v, v1, v2, v3);
+        setMotorPowers(-v, -v1, -v2, -v3);
     }
 
     private void setMotorsABS() {

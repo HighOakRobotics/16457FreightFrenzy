@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.SequentialTaskBundle;
 import com.ftc11392.sequoia.task.WaitTask;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
 
-@TeleOp(name = "test", group = "Quackology")
+@Disabled
+@TeleOp(name = "Motor Cycle Test", group = "Working Title")
 public class MotorTestOpMode extends SequoiaOpMode {
 
     Mecanum drivetrain = new Mecanum();

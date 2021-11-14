@@ -11,8 +11,11 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math3.analysis.solvers.MullerSolver;
 import org.apache.commons.math3.analysis.solvers.NewtonRaphsonSolver;
+import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
+import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 
 public class Arm extends Subsystem {
     DcMotorEx arm;
@@ -39,7 +42,7 @@ public class Arm extends Subsystem {
     int armHome;
     int wristHome;
 
-    public void modifySetpoint(double amount) {
+    public void modifySetpoint(double amount) {/*
         double[] kArm;
         double min, max;
         switch (mode) {
@@ -58,9 +61,9 @@ public class Arm extends Subsystem {
         }
         kArm[kArm.length - 1] = kArm[kArm.length - 1] - arm.getCurrentPosition();
         PolynomialFunction poly = new PolynomialFunction(kArm);
-        PolynomialSolver solver = new LaguerreSolver();
-        double currheight = solver.solve(10, poly, setpoint);
-        setpointTarget = currheight + amount;
+        UnivariateSolver solver = new MullerSolver();
+        double currheight = solver.solve(100, poly, min, max, setpoint);
+        setpointTarget = currheight + amount;*/ setpointTarget = setpoint+amount;
     }
 
     public ArmMode getMode() {
