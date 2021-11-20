@@ -1,31 +1,10 @@
-/*
- * Copyright (c) 2020 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.ftc11392.sequoia.util.Clock;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -35,73 +14,74 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
-/*
- * This sample demonstrates a basic (but battle-tested and essentially
- * 100% accurate) method of detecting the skystone when lined up with
- * the sample regions over the first 3 stones.
- */
-@TeleOp
 public class DuckDetector extends Subsystem {
 
-    SkystoneDeterminationPipeline pipeline;
-    OpenCvWebcam webcam;
+    protected OpenCvCamera camera;
+    protected Clock clock;
+
+    private DuckPipeline duckPipeline;
+
+    private boolean open = false;
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
+        clock = new Clock();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
-        webcam.setPipeline(pipeline);
-
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        duckPipeline = new DuckPipeline();
+        camera.setPipeline(duckPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+                telemetry.log().add("DuckDetector camera acquisition error: " + errorCode);
             }
         });
+        open = true;
+    }
+
+    @Override
+    public void initPeriodic() {
+        telemetry.addData("avg", "%d %d %d", duckPipeline.avg1, duckPipeline.avg2, duckPipeline.avg3);
+        telemetry.addData("maxVal", Math.max(Math.max(duckPipeline.avg1, duckPipeline.avg2), duckPipeline.avg3));
+    }
+
+    @Override
+    public void start() {
 
     }
 
     @Override
-    public void initPeriodic() { }
+    public void runPeriodic() {
 
-    @Override
-    public void start() { }
-
-    @Override
-    public void runPeriodic() { }
+    }
 
     @Override
     public void stop() {
-        webcam.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
-            @Override
-            public void onClose() {
-
-            }
-        });
+        if (open) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+        }
+        open = false;
     }
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
+    public DuckPipeline.DuckPosition getAnalysis(){
+        return duckPipeline.getAnalysis();
+    }
+
+    public static class DuckPipeline extends OpenCvPipeline
+    {
         /*
          * An enum to define the skystone position
          */
-        public enum SkystonePosition {
+        public enum DuckPosition
+        {
             LEFT,
             CENTER,
             RIGHT
@@ -110,15 +90,16 @@ public class DuckDetector extends Subsystem {
         /*
          * Some color constants
          */
+        static final Scalar RED = new Scalar(255,0,0);
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109, 98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181, 98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253, 98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
         static final int REGION_WIDTH = 20;
         static final int REGION_HEIGHT = 20;
 
@@ -167,19 +148,21 @@ public class DuckDetector extends Subsystem {
         int avg1, avg2, avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile SkystonePosition position = SkystonePosition.LEFT;
+        private volatile DuckPosition position = DuckPosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
          * and extracts the Cb channel to the 'Cb' variable
          */
-        void inputToCb(Mat input) {
+        void inputToCb(Mat input)
+        {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 2);
         }
 
         @Override
-        public void init(Mat firstFrame) {
+        public void init(Mat firstFrame)
+        {
             /*
              * We need to call this in order to make sure the 'Cb'
              * object is initialized, so that the submats we make
@@ -202,7 +185,8 @@ public class DuckDetector extends Subsystem {
         }
 
         @Override
-        public Mat processFrame(Mat input) {
+        public Mat processFrame(Mat input)
+        {
             /*
              * Overview of what we're doing:
              *
@@ -291,16 +275,15 @@ public class DuckDetector extends Subsystem {
             /*
              * Find the max of the 3 averages
              */
-            int maxOneTwo = Math.max(avg1, avg2);
-            int max = Math.max(maxOneTwo, avg3);
+            int min = Math.min(Math.min(avg1, avg2), avg3);
 
             /*
              * Now that we found the max, we actually need to go and
              * figure out which sample region that value was from
              */
-            if (max == avg1) // Was it from region 1?
+            if(min == avg1) // Was it from region 1?
             {
-                position = SkystonePosition.LEFT; // Record our analysis
+                position = DuckPosition.LEFT; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -310,11 +293,12 @@ public class DuckDetector extends Subsystem {
                         input, // Buffer to draw on
                         region1_pointA, // First point which defines the rectangle
                         region1_pointB, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
+                        min < 100 ? GREEN : RED, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-            } else if (max == avg2) // Was it from region 2?
+            }
+            else if(min == avg2) // Was it from region 2?
             {
-                position = SkystonePosition.CENTER; // Record our analysis
+                position = DuckPosition.CENTER; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -324,11 +308,12 @@ public class DuckDetector extends Subsystem {
                         input, // Buffer to draw on
                         region2_pointA, // First point which defines the rectangle
                         region2_pointB, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
+                        min < 100 ? GREEN : RED, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
-            } else if (max == avg3) // Was it from region 3?
+            }
+            else if(min == avg3) // Was it from region 3?
             {
-                position = SkystonePosition.RIGHT; // Record our analysis
+                position = DuckPosition.RIGHT; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -338,10 +323,13 @@ public class DuckDetector extends Subsystem {
                         input, // Buffer to draw on
                         region3_pointA, // First point which defines the rectangle
                         region3_pointB, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
+                        min < 100 ? GREEN : RED, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
             }
-
+            Imgproc.putText(input, Integer.toString(avg1), region1_pointB, Imgproc.FONT_HERSHEY_DUPLEX, 0.75, avg1 < 100 ? GREEN : RED);
+            Imgproc.putText(input, Integer.toString(avg2), region2_pointB, Imgproc.FONT_HERSHEY_DUPLEX, 0.75, avg2 < 100 ? GREEN : RED);
+            Imgproc.putText(input, Integer.toString(avg3), region3_pointB, Imgproc.FONT_HERSHEY_DUPLEX, 0.75, avg3 < 100 ? GREEN : RED);
+            Imgproc.putText(input, "Detection: "+position, new Point(0,25), Imgproc.FONT_HERSHEY_DUPLEX, 0.75, min < 100 ? GREEN : RED);
             /*
              * Render the 'input' buffer to the viewport. But note this is not
              * simply rendering the raw camera feed, because we called functions
@@ -353,7 +341,8 @@ public class DuckDetector extends Subsystem {
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public SkystonePosition getAnalysis() {
+        public DuckPosition getAnalysis()
+        {
             return position;
         }
     }
