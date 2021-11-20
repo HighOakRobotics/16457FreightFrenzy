@@ -25,12 +25,22 @@ public class DuckDetector extends Subsystem {
 
     private boolean open = false;
 
+    private int leftDuckX;
+    private int centerDuckX;
+    private int rightDuckX;
+
+    public DuckDetector(int leftDuckX, int centerDuckX, int rightDuckX) {
+        this.leftDuckX = leftDuckX;
+        this.centerDuckX = centerDuckX;
+        this.rightDuckX = rightDuckX;
+    }
+
     @Override
     public void initialize(HardwareMap hardwareMap) {
         clock = new Clock();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        duckPipeline = new DuckPipeline();
+        duckPipeline = new DuckPipeline(leftDuckX, centerDuckX, rightDuckX);
         camera.setPipeline(duckPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -97,11 +107,11 @@ public class DuckDetector extends Subsystem {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        Point REGION1_TOPLEFT_ANCHOR_POINT;
+        Point REGION2_TOPLEFT_ANCHOR_POINT;
+        Point REGION3_TOPLEFT_ANCHOR_POINT;
+        int REGION_WIDTH;
+        int REGION_HEIGHT;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
@@ -120,25 +130,12 @@ public class DuckDetector extends Subsystem {
          *   ------------------------------------
          *
          */
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region2_pointA = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x,
-                REGION2_TOPLEFT_ANCHOR_POINT.y);
-        Point region2_pointB = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region3_pointA = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x,
-                REGION3_TOPLEFT_ANCHOR_POINT.y);
-        Point region3_pointB = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
+        Point region1_pointA;
+        Point region1_pointB;
+        Point region2_pointA;
+        Point region2_pointB;
+        Point region3_pointA;
+        Point region3_pointB;
         /*
          * Working variables
          */
@@ -149,6 +146,53 @@ public class DuckDetector extends Subsystem {
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile DuckPosition position = DuckPosition.LEFT;
+
+        public DuckPipeline(int leftDuckX, int centerDuckX, int rightDuckX) {
+            /*
+             * The core values which define the location and size of the sample regions
+             */
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(leftDuckX,100);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(centerDuckX,100);
+            REGION3_TOPLEFT_ANCHOR_POINT = new Point(rightDuckX,100);
+            REGION_WIDTH = 40;
+            REGION_HEIGHT = 40;
+
+            /*
+             * Points which actually define the sample region rectangles, derived from above values
+             *
+             * Example of how points A and B work to define a rectangle
+             *
+             *   ------------------------------------
+             *   | (0,0) Point A                    |
+             *   |                                  |
+             *   |                                  |
+             *   |                                  |
+             *   |                                  |
+             *   |                                  |
+             *   |                                  |
+             *   |                  Point B (70,50) |
+             *   ------------------------------------
+             *
+             */
+            region1_pointA = new Point(
+                    REGION1_TOPLEFT_ANCHOR_POINT.x,
+                    REGION1_TOPLEFT_ANCHOR_POINT.y);
+            region1_pointB = new Point(
+                    REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                    REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+            region2_pointA = new Point(
+                    REGION2_TOPLEFT_ANCHOR_POINT.x,
+                    REGION2_TOPLEFT_ANCHOR_POINT.y);
+            region2_pointB = new Point(
+                    REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                    REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+            region3_pointA = new Point(
+                    REGION3_TOPLEFT_ANCHOR_POINT.x,
+                    REGION3_TOPLEFT_ANCHOR_POINT.y);
+            region3_pointB = new Point(
+                    REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                    REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        }
 
         /*
          * This function takes the RGB frame, converts to YCrCb,

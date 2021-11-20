@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
 @TeleOp
 public class DuckDetectorTestOpMode extends SequoiaOpMode {
 
-    DuckDetector duckDetector = new DuckDetector();
+    DuckDetector duckDetector = new DuckDetector(0, 105, 185);
 
     @Override
     public void initTriggers() {
