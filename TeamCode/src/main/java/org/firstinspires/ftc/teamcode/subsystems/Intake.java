@@ -10,24 +10,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Intake extends Subsystem {
     DcMotorEx intake;
 
-    public double getSetpoint() {
-        return setpoint;
+    public double getVelocity() {
+        return velocity;
     }
 
-    public void setVelocity(double setpoint) {
-        this.setpoint = setpoint;
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 
-    double setpoint;
+    double velocity;
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotorEx.class, "rotator");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setVelocity(0, AngleUnit.DEGREES);
 
-        setpoint = 0;
+        velocity = 0;
     }
 
     @Override
