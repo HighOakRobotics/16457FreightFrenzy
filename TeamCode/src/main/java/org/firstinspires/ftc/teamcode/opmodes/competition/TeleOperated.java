@@ -32,7 +32,7 @@ public class TeleOperated extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
-        intake.setVelocity(360.0);
+        intake.setVelocity(1800.0);
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
 
         gamepad1H.leftButton().onPress(new InstantTask(() -> arm.setMode(Arm.ArmMode.HORIZONTAL)));
