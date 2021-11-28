@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Rotator;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
@@ -23,6 +24,7 @@ public class TeleOperated extends SequoiaOpMode {
     private final Arm arm = new Arm();
     private final Rotator rotator = new Rotator();
     private final Gripper gripper = new Gripper();
+    private final Intake intake = new Intake();
 
     @Override
     public void initTriggers() {
@@ -30,6 +32,7 @@ public class TeleOperated extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
+        intake.setVelocity(360.0);
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
 
         gamepad1H.leftButton().onPress(new InstantTask(() -> arm.setMode(Arm.ArmMode.HORIZONTAL)));

@@ -9,6 +9,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Intake extends Subsystem{
     DcMotorEx IntakeMotor;
+    double velocity;
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
+
     @Override
     public void initialize(HardwareMap hardwareMap) {
         IntakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
@@ -29,7 +34,7 @@ public class Intake extends Subsystem{
 
     @Override
     public void runPeriodic() {
-        IntakeMotor.setVelocity(360, AngleUnit.DEGREES);
+        IntakeMotor.setVelocity(velocity, AngleUnit.DEGREES);
     }
 
     @Override
