@@ -1,25 +1,33 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class Intake extends Subsystem{
-    DcMotorEx IntakeMotor;
-    double velocity;
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
+public class Intake extends Subsystem {
+    DcMotorEx intake;
+
+    public double getSetpoint() {
+        return setpoint;
     }
+
+    public void setVelocity(double setpoint) {
+        this.setpoint = setpoint;
+    }
+
+    double setpoint;
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        IntakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-        IntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        IntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        IntakeMotor.setVelocity(0, AngleUnit.DEGREES);
+        intake = hardwareMap.get(DcMotorEx.class, "rotator");
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setVelocity(0, AngleUnit.DEGREES);
+
+        setpoint = 0;
     }
 
     @Override
@@ -34,11 +42,11 @@ public class Intake extends Subsystem{
 
     @Override
     public void runPeriodic() {
-        IntakeMotor.setVelocity(velocity, AngleUnit.DEGREES);
+        intake.setVelocity( 1800.0, AngleUnit.DEGREES);
     }
 
     @Override
     public void stop() {
-        IntakeMotor.setVelocity(0);
+        intake.setVelocity(0);
     }
 }
