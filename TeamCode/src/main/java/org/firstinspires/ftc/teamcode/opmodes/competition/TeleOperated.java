@@ -49,6 +49,7 @@ public class TeleOperated extends SequoiaOpMode {
         }, () -> {
             intake.setVelocity(0);
         }));
+
         AtomicInteger rotationdir = new AtomicInteger(1);
         gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> {
             rotator.setSetpoint(10 * rotationdir.get());
