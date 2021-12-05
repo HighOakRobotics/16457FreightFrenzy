@@ -1,21 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
-import com.ftc11392.sequoia.util.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
-
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
-import org.apache.commons.math3.analysis.solvers.MullerSolver;
-import org.apache.commons.math3.analysis.solvers.NewtonRaphsonSolver;
-import org.apache.commons.math3.analysis.solvers.PegasusSolver;
-import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
-import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 
 public class Arm extends Subsystem {
     DcMotorEx arm;
@@ -38,6 +28,9 @@ public class Arm extends Subsystem {
     int kArmMax = 3964;
     int kWristMin = -405;
     int kWristMax = 10;
+
+    double armPower = 1.0;
+    double wristPower = 0.5;
 
     int armHome;
     int wristHome;
@@ -114,12 +107,14 @@ public class Arm extends Subsystem {
 
     @Override
     public void start() {
-        arm.setPower(1);
-        wrist.setPower(0.5);
+        arm.setPower(armPower);
+        wrist.setPower(wristPower);
     }
 
     @Override
     public void runPeriodic() {
+        if (mode == ArmMode.POWER_OFF) { arm.setPower(0); wrist.setPower(0);}
+        else { arm.setPower(armPower); wrist.setPower(wristPower); }
         double armTarget = 0.0;
         double wristTarget = 0.0;
         switch (mode) {
@@ -160,7 +155,15 @@ public class Arm extends Subsystem {
         wrist.setPower(0);
     }
 
+    public int getArmPosition() {
+        return arm.getCurrentPosition();
+    }
+
+    public int getWristPosition() {
+        return wrist.getCurrentPosition();
+    }
+
     public enum ArmMode {
-        HORIZONTAL, VERTICAL, HOME
+        HORIZONTAL, VERTICAL, HOME, POWER_OFF
     }
 }
