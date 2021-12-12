@@ -28,6 +28,8 @@ public class TeleOperated extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
+
+
     }
 
     @Override
@@ -43,11 +45,21 @@ public class TeleOperated extends SequoiaOpMode {
 
         gamepad1H.leftTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75 * gamepad1.left_trigger)));
         gamepad1H.rightTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75 * gamepad1.right_trigger)));
-
+/*
         gamepad1H.yToggleButton().risingWithCancel(new StartEndTask(() -> {
             intake.setVelocity(1800.0);
         }, () -> {
             intake.setVelocity(0);
+        }));
+
+*/
+        //made intake basically a copy of rotator, hopefully that works
+        AtomicInteger rotationdir2 = new AtomicInteger(1);
+        gamepad1H.yToggleButton().risingWithCancel(new StartEndTask(() -> {
+            intake.setSetpoint(5 * rotationdir2.get());
+        }, () -> {
+            intake.setSetpoint(0);
+            rotationdir2.updateAndGet(v -> v * -1);
         }));
 
         AtomicInteger rotationdir = new AtomicInteger(1);

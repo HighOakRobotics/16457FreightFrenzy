@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.tuning;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
@@ -11,8 +13,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-class ArmRegressionTuner extends SequoiaOpMode {
+@Config
+@Autonomous(group = "tuning")
+public class ArmRegressionTuner extends SequoiaOpMode {
 
     double heightInput = 0.0; // Inches
 

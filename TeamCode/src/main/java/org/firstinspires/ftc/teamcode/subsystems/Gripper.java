@@ -22,9 +22,11 @@ public class Gripper extends Subsystem {
     @Override
     public void initialize(HardwareMap hardwareMap) {
         gripper = hardwareMap.get(Servo.class, "gripper");
-        state = GripperState.CLOSED;
-        gripper.setPosition(0);
+        //initialized to OPEN for teleop
+        state = GripperState.OPEN;
+        gripper.setPosition(1);
     }
+
 
     @Override
     public void initPeriodic() {
