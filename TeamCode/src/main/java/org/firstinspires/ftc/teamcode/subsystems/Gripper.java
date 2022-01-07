@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Gripper extends Subsystem {
     Servo gripper;
-    double kClose = 0;
-    double kOpen = 1;
+    double kClose = 0.4;
+    double kOpen = 0.65;
 
     public GripperState getState() {
         return state;
@@ -23,8 +23,8 @@ public class Gripper extends Subsystem {
     public void initialize(HardwareMap hardwareMap) {
         gripper = hardwareMap.get(Servo.class, "gripper");
         //initialized to OPEN for teleop
-        state = GripperState.OPEN;
-        gripper.setPosition(1);
+        state = GripperState.CLOSED;
+        gripper.setPosition(kClose);
     }
 
 
@@ -50,7 +50,7 @@ public class Gripper extends Subsystem {
 
     @Override
     public void stop() {
-
+        gripper.setPosition(kClose);
     }
 
     public enum GripperState {

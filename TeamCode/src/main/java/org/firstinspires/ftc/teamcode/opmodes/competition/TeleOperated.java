@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Rotator;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
+import org.firstinspires.ftc.teamcode.tasks.PrimeIntakeClass;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,12 +37,20 @@ public class TeleOperated extends SequoiaOpMode {
     public void runTriggers() {
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
 
-        gamepad1H.leftButton().onPress(new InstantTask(() -> arm.setMode(Arm.ArmMode.HORIZONTAL)));
-        gamepad1H.rightButton().onPress(new InstantTask(() -> arm.setMode(Arm.ArmMode.VERTICAL)));
+        gamepad1H.leftButton().onPress(new InstantTask(() -> {
+            arm.setMode(Arm.ArmMode.HORIZONTAL);
+            intake.setSetpoint(0);
+        }));
+        gamepad1H.rightButton().onPress(new InstantTask(() -> {
+            arm.setMode(Arm.ArmMode.VERTICAL);
+            intake.setSetpoint(0);
+        }));
         gamepad1H.leftBumperButton().onPress(new InstantTask(() -> {
             arm.setMode(Arm.ArmMode.HOME);
             gripper.setState(Gripper.GripperState.CLOSED);
+            intake.setSetpoint(0);
         }));
+        gamepad1H.rightBumperButton().onPress(new PrimeIntakeClass(arm, gripper, intake));
 
         gamepad1H.leftTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75 * gamepad1.left_trigger)));
         gamepad1H.rightTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75 * gamepad1.right_trigger)));
@@ -54,21 +63,14 @@ public class TeleOperated extends SequoiaOpMode {
 
 */
         //made intake basically a copy of rotator, hopefully that works
-        AtomicInteger rotationdir2 = new AtomicInteger(1);
-        gamepad1H.yToggleButton().risingWithCancel(new StartEndTask(() -> {
-            intake.setSetpoint(5 * rotationdir2.get());
-        }, () -> {
-            intake.setSetpoint(0);
-            rotationdir2.updateAndGet(v -> v * -1);
+        gamepad1H.yButton().onPress(new InstantTask(() -> {
+            intake.setSetpoint(10);
         }));
 
         AtomicInteger rotationdir = new AtomicInteger(1);
-        gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> {
-            rotator.setSetpoint(10 * rotationdir.get());
-        }, () -> {
-            rotator.setSetpoint(0);
-            rotationdir.updateAndGet(v -> v * -1);
-        }));
+        gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> rotator.setSetpoint(10 * rotationdir.get()), () -> rotator.setSetpoint(0)));
+        gamepad1H.upButton().onPress(new InstantTask(() -> rotationdir.getAndUpdate(v -> 1)));
+        gamepad1H.downButton().onPress(new InstantTask(() -> rotationdir.getAndUpdate(v -> -1)));
 
         gamepad1H.bToggleButton().risingWithCancel(new StartEndTask(() -> gripper.setState(Gripper.GripperState.OPEN), () -> gripper.setState(Gripper.GripperState.CLOSED)));
     }

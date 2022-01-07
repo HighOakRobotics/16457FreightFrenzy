@@ -15,26 +15,28 @@ public class Arm extends Subsystem {
     double setpointTarget;
     ArmMode mode;
     // MAGIC
-    double[] kArmH = {-0.00914442238794, 0.321261633047, -3.0919162105, -62.3691118109, 3883.42569027};
-    double[] kWristH = {0.000811713368041, -0.0282206891393, 0.290243892411, 5.84456287387, -278.301815978};
+    double[] kArmH = {-0.00194988, 0.110972, -2.33581, 22.0460, -155.179, 4133.49};
+    double[] kWristH = {0.0000875281, -0.00522224, 0.123372, -1.30577, 10.8216, -335.817};
     double kSetpointMinH = 0;
     double kSetpointMaxH = 24;
     //more magic
-    double[] kArmV = {-0.00403961044806, 0.0462405085444, -0.4377148918, -60.3767064186, 3378.86017533};
-    double[] kWristV = {0.00322737462992, -0.0863502618213, 0.894681801453, 2.32437048804, -94.9712215617};
+    double[] kArmV = {-0.00734996, 0.274343, -3.80298, 22.5151, -113.945, 3544.10};
+    double[] kWristV = {0.00122341, -0.0462197, 0.618546, -3.20674, 10.5636, -138.016};
     double kSetpointMinV = 0;
-    double kSetpointMaxV = 12.5;
+    double kSetpointMaxV = 15.5;
     //Physical limits
-    int kArmMin = 0;
-    int kArmMax = 3964;
-    int kWristMin = -405;
+    int kArmMin = 10;
+    int kArmMax = 4200;
+    int kWristMin = -450;
     int kWristMax = 10;
 
     double armPower = 1.0;
-    double wristPower = 0.5;
+    double wristPower = 0.4;
 
     int armHome;
     int wristHome;
+    int armIntake = 560;
+    int wristIntake = -410;
 
     public void modifySetpoint(double amount) {/*
         double[] kArm;
@@ -133,11 +135,21 @@ public class Arm extends Subsystem {
                 armTarget = armHome;
                 wristTarget = wristHome;
                 break;
+            case INTAKE:
+                armTarget = armIntake;
+                wristTarget = wristIntake;
+                break;
         }
 
         // Rough limit compensation to prevent jamming wrist against the ground
         if (wrist.getCurrentPosition() > -150 && arm.getCurrentPosition() > 3200 && mode == ArmMode.HORIZONTAL)
             armTarget = kArmV[kArmV.length - 1];
+        // Rough limit compensation to prevent wrist from crashing into robot from HOME > INTAKE transistion
+        if ((wrist.getCurrentPosition() > -400 && arm.getCurrentPosition() < 2000 && mode == ArmMode.INTAKE) ||
+                (wrist.getCurrentPosition() < -200 && arm.getCurrentPosition() < 2000 && mode == ArmMode.HOME))
+            armTarget = 1200;
+        if (wrist.getCurrentPosition() < -200 && mode == ArmMode.HOME && arm.getCurrentPosition() < 1100)
+            wristTarget = wrist.getCurrentPosition();
         arm.setTargetPosition(Range.clip((int) Math.round(armTarget), kArmMin, kArmMax));
         wrist.setTargetPosition(Range.clip((int) Math.round(wristTarget), kWristMin, kWristMax));
 
@@ -165,6 +177,6 @@ public class Arm extends Subsystem {
     }
 
     public enum ArmMode {
-        HORIZONTAL, VERTICAL, HOME, POWER_OFF
+        HORIZONTAL, VERTICAL, HOME, INTAKE, POWER_OFF
     }
 }
