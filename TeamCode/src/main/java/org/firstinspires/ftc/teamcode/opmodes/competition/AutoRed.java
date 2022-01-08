@@ -32,7 +32,7 @@ public class AutoRed extends SequoiaOpMode {
     Gripper gripper = new Gripper();
 
     Map<Object, Task> positionMap = new HashMap<Object, Task>(){{
-        put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
+        put(duckDetector.getAnalysis(), new SequentialTaskBundle(
                 new InstantTask(() -> {
                     arm.setMode(Arm.ArmMode.HORIZONTAL);
                     arm.modifySetpoint(6);
