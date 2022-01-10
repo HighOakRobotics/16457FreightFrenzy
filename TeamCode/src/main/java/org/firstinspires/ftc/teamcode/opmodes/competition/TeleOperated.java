@@ -52,8 +52,8 @@ public class TeleOperated extends SequoiaOpMode {
         }));
         gamepad1H.rightBumperButton().onPress(new PrimeIntakeClass(arm, gripper, intake));
 
-        gamepad1H.leftTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75 * gamepad1.left_trigger)));
-        gamepad1H.rightTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75 * gamepad1.right_trigger)));
+        gamepad1H.leftTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(-0.75)));
+        gamepad1H.rightTriggerButton(0.01).whilePressed(new InstantTask(() -> arm.modifySetpoint(0.75)));
 /*
         gamepad1H.yToggleButton().risingWithCancel(new StartEndTask(() -> {
             intake.setVelocity(1800.0);

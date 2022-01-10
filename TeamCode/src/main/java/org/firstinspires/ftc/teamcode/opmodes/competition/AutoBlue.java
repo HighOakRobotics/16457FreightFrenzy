@@ -31,7 +31,7 @@ public class AutoBlue extends SequoiaOpMode {
     Gripper gripper = new Gripper();
 
     Map<Object, Task> positionMap = new HashMap<Object, Task>(){{
-        put(duckDetector.getAnalysis(), new SequentialTaskBundle(
+        put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
                 new InstantTask(() -> {
                     arm.setMode(Arm.ArmMode.HORIZONTAL);
                     arm.modifySetpoint(6);
@@ -78,13 +78,15 @@ public class AutoBlue extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-33,63.5));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-33,63.5, Math.PI));
+        gripper.setState(Gripper.GripperState.CLOSED);
     }
 
     @Override
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
+                //git new WaitTask(5, TimeUnit.SECONDS),
                 new SwitchTask(positionMap, () -> position),
                 new InstantTask(() -> gripper.setState(Gripper.GripperState.OPEN)),
                 new WaitTask(1),
@@ -96,18 +98,18 @@ public class AutoBlue extends SequoiaOpMode {
                 new InstantTask(() -> arm.setMode(Arm.ArmMode.HOME)),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-66.5,59.5,Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-66.5,59.5, Math.PI))
                         .build()),
                 new InstantTask(() -> rotator.setSetpoint(10)),
                 new WaitTask(3),
                 new InstantTask(() -> rotator.setSetpoint(0)),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(0,72.5,Math.PI))
+                        .lineToLinearHeading(new Pose2d(0,72.5,0))
                         .build()),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(48,72.5,Math.PI))
+                        .lineToLinearHeading(new Pose2d(48,72.5,0))
                         .build()),
                 new InstantTask(this::requestOpModeStop)
         ));

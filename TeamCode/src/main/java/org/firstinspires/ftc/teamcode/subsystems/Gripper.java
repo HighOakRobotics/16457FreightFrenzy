@@ -30,6 +30,7 @@ public class Gripper extends Subsystem {
 
     @Override
     public void initPeriodic() {
+        runPeriodic();
     }
 
     @Override

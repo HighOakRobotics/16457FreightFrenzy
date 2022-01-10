@@ -15,17 +15,17 @@ public class Arm extends Subsystem {
     double setpointTarget;
     ArmMode mode;
     // MAGIC
-    double[] kArmH = {-0.00194988, 0.110972, -2.33581, 22.0460, -155.179, 4133.49};
-    double[] kWristH = {0.0000875281, -0.00522224, 0.123372, -1.30577, 10.8216, -335.817};
+    double[] kArmH = {-0.000430352, 0.0139650, 0.0250669, -3.86955, -40.7864, 4091.66};
+    double[] kWristH = {-0.00000174650, 0.00219642, -0.108194, 1.81155, -5.45495, -353.855};
     double kSetpointMinH = 0;
-    double kSetpointMaxH = 24;
+    double kSetpointMaxH = 25.5;
     //more magic
     double[] kArmV = {-0.00734996, 0.274343, -3.80298, 22.5151, -113.945, 3544.10};
     double[] kWristV = {0.00122341, -0.0462197, 0.618546, -3.20674, 10.5636, -138.016};
     double kSetpointMinV = 0;
     double kSetpointMaxV = 15.5;
     //Physical limits
-    int kArmMin = 10;
+    int kArmMin = -10;
     int kArmMax = 4200;
     int kWristMin = -450;
     int kWristMax = 10;

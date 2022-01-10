@@ -32,7 +32,7 @@ public class AutoRed extends SequoiaOpMode {
     Gripper gripper = new Gripper();
 
     Map<Object, Task> positionMap = new HashMap<Object, Task>(){{
-        put(duckDetector.getAnalysis(), new SequentialTaskBundle(
+        put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
                 new InstantTask(() -> {
                     arm.setMode(Arm.ArmMode.HORIZONTAL);
                     arm.modifySetpoint(6);
@@ -80,12 +80,14 @@ public class AutoRed extends SequoiaOpMode {
     @Override
     public void initTriggers() {
         mecanum.mecanum().setPoseEstimate(new Pose2d(-33,-63.5));
+        gripper.setState(Gripper.GripperState.CLOSED);
     }
 
     @Override
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
+                //new WaitTask(8, TimeUnit.SECONDS),
                 new SwitchTask(positionMap, () -> position),
                 new InstantTask(() -> gripper.setState(Gripper.GripperState.OPEN)),
                 new WaitTask(1),
