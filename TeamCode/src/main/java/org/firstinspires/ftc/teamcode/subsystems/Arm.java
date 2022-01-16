@@ -57,7 +57,8 @@ public class Arm extends Subsystem {
         PolynomialFunction poly = new PolynomialFunction(kArm);
         UnivariateSolver solver = new MullerSolver();
         double currheight = solver.solve(100, poly, min, max, setpoint);
-        setpointTarget = currheight + amount;*/ setpointTarget = setpoint+amount;
+        setpointTarget = currheight + amount;*/
+        setpointTarget = setpoint+amount;
     }
 
     public ArmMode getMode() {
