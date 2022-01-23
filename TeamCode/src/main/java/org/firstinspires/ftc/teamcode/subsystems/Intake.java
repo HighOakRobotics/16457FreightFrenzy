@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Intake extends Subsystem {
     DcMotorEx intake;
-    double ratio=-200.0;
+    double ratio=1.0;
     public double getSetpoint() {
         return setpoint;
     }
