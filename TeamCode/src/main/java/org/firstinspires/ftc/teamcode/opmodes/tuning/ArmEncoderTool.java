@@ -1,0 +1,20 @@
+package org.firstinspires.ftc.teamcode.opmodes.tuning;
+
+import com.ftc11392.sequoia.SequoiaOpMode;
+
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+
+public class ArmEncoderTool extends SequoiaOpMode {
+
+    Arm arm = new Arm();
+
+    @Override
+    public void initTriggers() {
+
+    }
+
+    @Override
+    public void runTriggers() {
+        arm.setState(Arm.ArmState.IDLE);
+    }
+}

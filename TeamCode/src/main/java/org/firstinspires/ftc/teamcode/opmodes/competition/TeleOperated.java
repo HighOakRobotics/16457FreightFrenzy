@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.competition;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm2;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
@@ -22,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TeleOp(name = "TeleOp", group = "Working Title")
 public class TeleOperated extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
-    private final Arm arm = new Arm();
+    private final Arm2 arm = new Arm2();
     private final Rotator rotator = new Rotator();
     private final Gripper gripper = new Gripper();
     private final Intake intake = new Intake();
@@ -38,15 +34,15 @@ public class TeleOperated extends SequoiaOpMode {
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
 
         gamepad1H.leftButton().onPress(new InstantTask(() -> {
-            arm.setMode(Arm.ArmMode.HORIZONTAL);
+            arm.setMode(Arm2.ArmMode.HORIZONTAL);
             intake.setSetpoint(0);
         }));
         gamepad1H.rightButton().onPress(new InstantTask(() -> {
-            arm.setMode(Arm.ArmMode.VERTICAL);
+            arm.setMode(Arm2.ArmMode.VERTICAL);
             intake.setSetpoint(0);
         }));
         gamepad1H.leftBumperButton().onPress(new InstantTask(() -> {
-            arm.setMode(Arm.ArmMode.HOME);
+            arm.setMode(Arm2.ArmMode.HOME);
             gripper.setState(Gripper.GripperState.CLOSED);
             intake.setSetpoint(0);
         }));

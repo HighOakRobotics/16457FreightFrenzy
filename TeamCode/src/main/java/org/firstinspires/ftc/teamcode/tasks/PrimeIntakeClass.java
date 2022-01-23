@@ -3,20 +3,18 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.util.Clock;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm2;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-import java.util.concurrent.TimeUnit;
-
 public class PrimeIntakeClass extends Task {
 
-    Arm arm;
+    Arm2 arm;
     Gripper gripper;
     Intake intake;
     Clock clock;
 
-    public PrimeIntakeClass(Arm arm, Gripper gripper, Intake intake) {
+    public PrimeIntakeClass(Arm2 arm, Gripper gripper, Intake intake) {
         this.arm = arm;
         this.gripper = gripper;
         this.intake = intake;
@@ -26,7 +24,7 @@ public class PrimeIntakeClass extends Task {
     @Override
     public void init() {
         running = true;
-        arm.setMode(Arm.ArmMode.INTAKE);
+        arm.setMode(Arm2.ArmMode.INTAKE);
         gripper.setState(Gripper.GripperState.CLOSED);
         clock.startTiming();
     }
