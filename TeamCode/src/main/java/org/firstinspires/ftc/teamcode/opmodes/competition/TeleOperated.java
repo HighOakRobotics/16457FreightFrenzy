@@ -9,7 +9,7 @@ import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm2;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
@@ -22,7 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TeleOp(name = "TeleOp", group = "Working Title")
 public class TeleOperated extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
+    private final Arm2 arm = new Arm2();
     private final Rotator rotator = new Rotator();
+    private final Gripper gripper = new Gripper();
     private final Intake intake = new Intake();
 
     @Override

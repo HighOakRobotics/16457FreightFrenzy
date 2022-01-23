@@ -4,16 +4,18 @@ import com.acmerobotics.dashboard.config.Config;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.util.Pair;
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Arm2;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 @Config
+@Disabled
 @Autonomous(group = "tuning")
 public class ArmRegressionTuner extends SequoiaOpMode {
 
@@ -22,7 +24,7 @@ public class ArmRegressionTuner extends SequoiaOpMode {
     List<Pair<Double, Integer>> armData = new LinkedList<>();
     List<Pair<Double, Integer>> wristData = new LinkedList<>();
 
-    Arm arm = new Arm();
+    Arm2 arm = new Arm2();
 
     @Override
     public void initTriggers() {
@@ -31,7 +33,7 @@ public class ArmRegressionTuner extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
-        arm.setMode(Arm.ArmMode.POWER_OFF);
+        arm.setMode(Arm2.ArmMode.POWER_OFF);
         telemetry.log().add("A");
 
         gamepad1H.upButton().onPress(new InstantTask(() -> {

@@ -23,7 +23,7 @@ public class Rotator extends Subsystem {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        rotator = hardwareMap.get(DcMotorEx.class, "rotator");
+        rotator = hardwareMap.get(DcMotorEx.class, "carousel");
         rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rotator.setVelocity(0, AngleUnit.DEGREES);
