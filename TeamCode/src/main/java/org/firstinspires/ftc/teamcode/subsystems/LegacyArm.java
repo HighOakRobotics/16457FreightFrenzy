@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
-public class Arm2 extends Subsystem {
+public class LegacyArm extends Subsystem {
     DcMotorEx arm;
     DcMotorEx wrist;
     double setpoint;

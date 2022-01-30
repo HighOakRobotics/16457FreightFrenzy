@@ -4,11 +4,13 @@ import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Arm extends Subsystem {
     DcMotorEx arm, rotator;
+    AngularServo wrist;
     int armTarget, rotatorTarget;
     double armTargetPower = 0.8, rotatorTargetPower = 0.8;
     public final static double TICKS_PER_RADIAN = 85.5776129005;
@@ -28,6 +30,12 @@ public class Arm extends Subsystem {
         rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTarget = 0;
         rotatorTarget = 0;
+
+        wrist = new AngularServo(
+                hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 4
+        );
+        wrist.setPosition(0);
+
         state = ArmState.TARGET;
     }
 
@@ -53,6 +61,13 @@ public class Arm extends Subsystem {
                 rotator.setPower(rotatorTargetPower);
                 arm.setTargetPosition(armTarget);
                 rotator.setTargetPosition(rotatorTarget);
+                break;
+            case INTAKE:
+                arm.setPower(armTargetPower);
+                rotator.setPower(rotatorTargetPower);
+                arm.setTargetPosition(armTarget);
+                rotator.setTargetPosition(rotatorTarget);
+                wrist.setPosition(Math.PI / 4);
                 break;
         }
 
@@ -96,6 +111,6 @@ public class Arm extends Subsystem {
     }
 
     public enum ArmState {
-        IDLE, TARGET
+        IDLE, TARGET, INTAKE
     }
 }

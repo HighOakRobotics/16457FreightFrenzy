@@ -4,10 +4,17 @@ import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class Gripper extends Subsystem {
-    Servo gripper;
-    double kClose = 0.4;
-    double kOpen = 0.65;
+
+    AngularServo servo;
+    double target; // radians
+
+    // all in radians
+    double CLOSED_POSITION = 0;
+    double INTAKE_POSITION = Math.PI / 6;
+    double OPEN_POSITION = Math.PI / 3;
 
     public GripperState getState() {
         return state;
@@ -21,40 +28,39 @@ public class Gripper extends Subsystem {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        gripper = hardwareMap.get(Servo.class, "gripper");
-        //initialized to OPEN for teleop
+        servo = new AngularServo(
+                hardwareMap.get(Servo.class, "gripper"), 3 * Math.PI / 4);
+        servo.setPosition(0);
+        target = 0;
         state = GripperState.CLOSED;
-        gripper.setPosition(kClose);
-    }
-
-
-    @Override
-    public void initPeriodic() {
-        runPeriodic();
     }
 
     @Override
-    public void start() {
-    }
+    public void initPeriodic() { }
+
+    @Override
+    public void start() { }
 
     @Override
     public void runPeriodic() {
         switch (state) {
-            case OPEN:
-                gripper.setPosition(kOpen);
-                break;
             case CLOSED:
-                gripper.setPosition(kClose);
+                target = CLOSED_POSITION;
+                break;
+            case INTAKE:
+                target = INTAKE_POSITION;
+                break;
+            case OPEN:
+                target = OPEN_POSITION;
                 break;
         }
+        servo.setPosition(target);
     }
 
     @Override
-    public void stop() {
-        gripper.setPosition(kClose);
-    }
+    public void stop() {}
 
     public enum GripperState {
-        OPEN, CLOSED;
+        CLOSED, INTAKE, OPEN
     }
 }

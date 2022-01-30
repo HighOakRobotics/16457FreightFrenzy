@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.util.Pair;
-import org.firstinspires.ftc.teamcode.subsystems.Arm2;
+import org.firstinspires.ftc.teamcode.subsystems.LegacyArm;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ public class ArmRegressionTuner extends SequoiaOpMode {
     List<Pair<Double, Integer>> armData = new LinkedList<>();
     List<Pair<Double, Integer>> wristData = new LinkedList<>();
 
-    Arm2 arm = new Arm2();
+    LegacyArm arm = new LegacyArm();
 
     @Override
     public void initTriggers() {
@@ -33,7 +33,7 @@ public class ArmRegressionTuner extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
-        arm.setMode(Arm2.ArmMode.POWER_OFF);
+        arm.setMode(LegacyArm.ArmMode.POWER_OFF);
         telemetry.log().add("A");
 
         gamepad1H.upButton().onPress(new InstantTask(() -> {
