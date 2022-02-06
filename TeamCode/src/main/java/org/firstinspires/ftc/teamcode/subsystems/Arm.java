@@ -9,12 +9,28 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Arm extends Subsystem {
-    DcMotorEx arm, rotator;
+    DcMotorEx arm;
+    DcMotorEx rotator;
     AngularServo wrist;
-    int armTarget, rotatorTarget;
-    double armTargetPower = 0.8, rotatorTargetPower = 0.8;
+    AngularServo gripper;
+    int armTarget;
+    int rotatorTarget;
+    double wristTarget;
+
+    double WRIST_UPRIGHT_POSITION = 0.0;
+    double WRIST_HORIZONTAL_POSITION = 0.0;
+
+    double GRIPPER_OPEN_POSITION = 0.0;
+    double GRIPPER_CLOSE_POSITION = 0.0;
+    double GRIPPER_INTAKE_POSITION = 0.0;
+
+    double armTargetPower = 0.8;
+    double rotatorTargetPower = 0.8;
     public final static double TICKS_PER_RADIAN = 85.5776129005;
-    ArmState state;
+
+    ArmState armState;
+    WristState wristState;
+    GripperState gripperState;
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
@@ -35,8 +51,16 @@ public class Arm extends Subsystem {
                 hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 4
         );
         wrist.setPosition(0);
+        wristState = WristState.UPRIGHT;
 
-        state = ArmState.TARGET;
+        gripper = new AngularServo(
+                hardwareMap.get(Servo.class, "gripper"), 3 * Math.PI / 4);
+        gripper.setPosition(0);
+        gripperState = GripperState.CLOSE;
+
+        wristTarget = 0;
+
+        armState = ArmState.TARGET;
     }
 
     @Override
@@ -51,7 +75,8 @@ public class Arm extends Subsystem {
 
     @Override
     public void runPeriodic() {
-        switch (state) {
+        // Arm and rotator state handling
+        switch (armState) {
             case IDLE:
                 arm.setPower(0);
                 rotator.setPower(0);
@@ -62,12 +87,29 @@ public class Arm extends Subsystem {
                 arm.setTargetPosition(armTarget);
                 rotator.setTargetPosition(rotatorTarget);
                 break;
+        }
+        // Wrist state handling
+        switch (wristState) {
+            case UPRIGHT:
+                wrist.setPosition(WRIST_UPRIGHT_POSITION);
+                break;
+            case HORIZONTAL:
+                wrist.setPosition(WRIST_HORIZONTAL_POSITION);
+                break;
+            case TARGET:
+                wrist.setPosition(wristTarget);
+                break;
+        }
+        // Gripper state handling
+        switch (gripperState) {
+            case OPEN:
+                gripper.setPosition(GRIPPER_OPEN_POSITION);
+                break;
+            case CLOSE:
+                gripper.setPosition(GRIPPER_CLOSE_POSITION);
+                break;
             case INTAKE:
-                arm.setPower(armTargetPower);
-                rotator.setPower(rotatorTargetPower);
-                arm.setTargetPosition(armTarget);
-                rotator.setTargetPosition(rotatorTarget);
-                wrist.setPosition(Math.PI / 4);
+                gripper.setPosition(GRIPPER_INTAKE_POSITION);
                 break;
         }
 
@@ -81,12 +123,12 @@ public class Arm extends Subsystem {
 
     }
 
-    public ArmState getState() {
-        return state;
+    public ArmState getArmState() {
+        return armState;
     }
 
-    public void setState(ArmState state) {
-        this.state = state;
+    public void setArmState(ArmState armState) {
+        this.armState = armState;
     }
 
     public double radiansToTicks(double radians) {
@@ -111,6 +153,14 @@ public class Arm extends Subsystem {
     }
 
     public enum ArmState {
-        IDLE, TARGET, INTAKE
+        IDLE, TARGET
+    }
+
+    public enum WristState {
+        UPRIGHT, HORIZONTAL, TARGET
+    }
+
+    public enum GripperState {
+        OPEN, CLOSE, INTAKE
     }
 }

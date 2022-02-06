@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
@@ -17,11 +20,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Rotator;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@Autonomous(name = "Auto Blue", group = "Working Title")
-public class AutoBlue extends SequoiaOpMode {
+@Autonomous(name = "Auto Red", group = "Working Title")
+public class AutoRedCarousel extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(0, 105, 185);
     Mecanum mecanum = new Mecanum();
@@ -37,11 +37,11 @@ public class AutoBlue extends SequoiaOpMode {
                 }),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,60,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-60,Math.PI/2))
                         .build()),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,53,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-53,Math.PI/2))
                         .build())
 
         ));
@@ -52,11 +52,11 @@ public class AutoBlue extends SequoiaOpMode {
                 }),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,60,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-60,Math.PI/2))
                         .build()),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,51,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-51,Math.PI/2))
                         .build())
         ));
         put(DuckDetector.DuckPipeline.DuckPosition.RIGHT, new SequentialTaskBundle(
@@ -66,18 +66,18 @@ public class AutoBlue extends SequoiaOpMode {
                 }),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,58,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-58,Math.PI/2))
                         .build()),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-12,51,-Math.PI/2))
+                        .lineToLinearHeading(new Pose2d(-12,-51,Math.PI/2))
                         .build())
         ));
     }};
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-33,63.5, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-33,-63.5));
         legacyGripper.setState(LegacyGripper.GripperState.CLOSED);
     }
 
@@ -85,30 +85,30 @@ public class AutoBlue extends SequoiaOpMode {
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
-                //git new WaitTask(5, TimeUnit.SECONDS),
+                //new WaitTask(8, TimeUnit.SECONDS),
                 new SwitchTask(positionMap, () -> position),
                 new InstantTask(() -> legacyGripper.setState(LegacyGripper.GripperState.OPEN)),
                 new WaitTask(1),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
                         .lineToLinearHeading(mecanum.mecanum().getPoseEstimate()
-                                .plus(new Pose2d(0,5)))
+                                .plus(new Pose2d(0,-5)))
                         .build()),
                 new InstantTask(() -> arm.setMode(LegacyArm.ArmMode.HOME)),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-66.5,59.5, Math.PI))
+                        .lineToLinearHeading(new Pose2d(-66.5,-59.5,-Math.PI/2))
                         .build()),
-                new InstantTask(() -> rotator.setSetpoint(10)),
+                new InstantTask(() -> rotator.setSetpoint(-10)),
                 new WaitTask(3),
                 new InstantTask(() -> rotator.setSetpoint(0)),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(0,72.5,0))
+                        .lineToLinearHeading(new Pose2d(0,-72.5,Math.PI))
                         .build()),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(48,72.5,0))
+                        .lineToLinearHeading(new Pose2d(48,-72.5,Math.PI))
                         .build()),
                 new InstantTask(this::requestOpModeStop)
         ));

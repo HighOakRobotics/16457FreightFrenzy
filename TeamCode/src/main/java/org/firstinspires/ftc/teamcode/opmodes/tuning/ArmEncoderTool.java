@@ -15,6 +15,6 @@ public class ArmEncoderTool extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
-        arm.setState(Arm.ArmState.IDLE);
+        arm.setArmState(Arm.ArmState.IDLE);
     }
 }
