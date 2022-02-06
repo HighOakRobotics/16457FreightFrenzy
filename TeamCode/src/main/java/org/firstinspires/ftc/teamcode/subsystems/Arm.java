@@ -4,6 +4,8 @@ import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -16,21 +18,27 @@ public class Arm extends Subsystem {
     int armTarget;
     int rotatorTarget;
     double wristTarget;
+    double gripperTarget;
 
     double WRIST_UPRIGHT_POSITION = 0.0;
-    double WRIST_HORIZONTAL_POSITION = 0.0;
+    double WRIST_HORIZONTAL_POSITION = 0.75;
 
-    double GRIPPER_OPEN_POSITION = 0.0;
+    double GRIPPER_OPEN_POSITION = 0.3;
     double GRIPPER_CLOSE_POSITION = 0.0;
-    double GRIPPER_INTAKE_POSITION = 0.0;
+    double GRIPPER_INTAKE_POSITION = 0.6;
+    double GRIPPER_ELEMENT_POSITION = 0.25;
 
     double armTargetPower = 0.8;
     double rotatorTargetPower = 0.8;
     public final static double TICKS_PER_RADIAN = 85.5776129005;
 
     ArmState armState;
+
     WristState wristState;
     GripperState gripperState;
+
+    // Untracked value, updated externally
+    ArmWaypointGraph.ArmWaypointName lastWaypoint;
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
@@ -59,8 +67,30 @@ public class Arm extends Subsystem {
         gripperState = GripperState.CLOSE;
 
         wristTarget = 0;
+        gripperTarget = 0;
 
         armState = ArmState.TARGET;
+
+        lastWaypoint = ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT;
+
+        arm.setTargetPositionTolerance(10);
+        rotator.setTargetPositionTolerance(10);
+
+        arm.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(7.5, 0, 3.625));
+        rotator.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(2, 0.1, 0.5));
+
+        telemetry.log().add("arm P%.2f I%.2f D%.2f F%.2f",
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f
+        );
+        telemetry.log().add("rotator P%.2f I%.2f D%.2f F%.2f",
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f
+        );
     }
 
     @Override
@@ -111,11 +141,19 @@ public class Arm extends Subsystem {
             case INTAKE:
                 gripper.setPosition(GRIPPER_INTAKE_POSITION);
                 break;
+            case ELEMENT:
+                gripper.setPosition(GRIPPER_ELEMENT_POSITION);
+                break;
+            case TARGET:
+                gripper.setPosition(gripperTarget);
+                break;
         }
 
         telemetry.addLine()
                 .addData("armRad", ticksToRadians(arm.getCurrentPosition()))
-                .addData("rotRad", ticksToRadians(rotator.getCurrentPosition()));
+                .addData("rotRad", ticksToRadians(rotator.getCurrentPosition()))
+                .addData("armCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
+                .addData("rotCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance());
     }
 
     @Override
@@ -130,6 +168,23 @@ public class Arm extends Subsystem {
     public void setArmState(ArmState armState) {
         this.armState = armState;
     }
+
+    public WristState getWristState() {
+        return wristState;
+    }
+
+    public void setWristState(WristState wristState) {
+        this.wristState = wristState;
+    }
+
+    public GripperState getGripperState() {
+        return gripperState;
+    }
+
+    public void setGripperState(GripperState gripperState) {
+        this.gripperState = gripperState;
+    }
+
 
     public double radiansToTicks(double radians) {
         return radians * TICKS_PER_RADIAN;
@@ -152,6 +207,21 @@ public class Arm extends Subsystem {
         rotatorTarget = (int) Math.round(radiansToTicks(radians));
     }
 
+    public boolean isWithinTarget() {
+        return (
+                (Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()) <= arm.getTargetPositionTolerance()) &&
+                        (Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()) < rotator.getTargetPositionTolerance())
+        );
+    }
+
+    public ArmWaypointGraph.ArmWaypointName getLastWaypoint() {
+        return lastWaypoint;
+    }
+
+    public void setLastWaypoint(ArmWaypointGraph.ArmWaypointName lastWaypoint) {
+        this.lastWaypoint = lastWaypoint;
+    }
+
     public enum ArmState {
         IDLE, TARGET
     }
@@ -161,6 +231,6 @@ public class Arm extends Subsystem {
     }
 
     public enum GripperState {
-        OPEN, CLOSE, INTAKE
+        OPEN, CLOSE, INTAKE, ELEMENT, TARGET
     }
 }
