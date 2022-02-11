@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
 import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
 import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyGripper;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
-import org.firstinspires.ftc.teamcode.subsystems.Rotator;
+import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class AutoBlueCarousel extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(0, 105, 185);
     Mecanum mecanum = new Mecanum();
-    Rotator rotator = new Rotator();
+    Carousel carousel = new Carousel();
     LegacyArm arm = new LegacyArm();
     LegacyGripper legacyGripper = new LegacyGripper();
 
@@ -99,9 +99,9 @@ public class AutoBlueCarousel extends SequoiaOpMode {
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(-66.5,59.5, Math.PI))
                         .build()),
-                new InstantTask(() -> rotator.setSetpoint(10)),
+                new InstantTask(() -> carousel.setSetpoint(10)),
                 new WaitTask(3),
-                new InstantTask(() -> rotator.setSetpoint(0)),
+                new InstantTask(() -> carousel.setSetpoint(0)),
                 new FollowTrajectoryTask(mecanum, () -> mecanum.mecanum()
                         .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
                         .lineToLinearHeading(new Pose2d(0,72.5,0))

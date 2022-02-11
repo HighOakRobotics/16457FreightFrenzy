@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
-import org.firstinspires.ftc.teamcode.subsystems.Rotator;
+import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TeleOp(name = "TeleOp", group = "Working Title")
 public class TeleOperated extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
-    private final Rotator rotator = new Rotator();
+    private final Carousel carousel = new Carousel();
     private final Intake intake = new Intake();
 
     @Override
@@ -34,7 +34,7 @@ public class TeleOperated extends SequoiaOpMode {
         }, () -> {intake.setSetpoint(0);}));
 
         AtomicInteger rotationdir = new AtomicInteger(1);
-        gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> rotator.setSetpoint(10 * rotationdir.get()), () -> rotator.setSetpoint(0)));
+        gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> carousel.setSetpoint(10 * rotationdir.get()), () -> carousel.setSetpoint(0)));
         gamepad1H.upButton().onPress(new InstantTask(() -> rotationdir.getAndUpdate(v -> 1)));
         gamepad1H.downButton().onPress(new InstantTask(() -> rotationdir.getAndUpdate(v -> -1)));
     }

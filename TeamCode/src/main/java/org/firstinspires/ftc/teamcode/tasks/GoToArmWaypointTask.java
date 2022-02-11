@@ -4,8 +4,11 @@ import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.util.Clock;
 
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmConstants;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypoint;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
+import org.firstinspires.ftc.teamcode.utils.Profile;
+import org.firstinspires.ftc.teamcode.utils.ProfileGenerator;
 
 import java.util.List;
 
@@ -16,60 +19,77 @@ public class GoToArmWaypointTask extends Task {
 
     Arm arm;
     ArmWaypointGraph.ArmWaypointName target;
-    List<ArmWaypoint> armWaypointList;
+    List<ArmWaypoint> armWaypointPath;
     int currentIndex;
     ArmWaypoint currentWaypoint;
     ArmWaypoint previousWaypoint;
     Clock clock;
+    double currentWaypointDuration;
+    ProfileGenerator armProfileGenerator;
+    ProfileGenerator rotatorProfileGenerator;
+    Profile currentArmProfile;
+    Profile currentRotatorProfile;
+    boolean isCurrentWaypointServoAction;
 
     public GoToArmWaypointTask(Arm arm, ArmWaypointGraph.ArmWaypointName target) {
         this.arm = arm;
         this.target = target;
         this.clock = new Clock();
+        this.armProfileGenerator = new ProfileGenerator(
+                ArmConstants.ARM_MAXIMUM_ACCELERATION, ArmConstants.ARM_MAXIMUM_VELOCITY
+        );
+        this.rotatorProfileGenerator = new ProfileGenerator(
+                ArmConstants.ROTATOR_MAXIMUM_ACCELERATION, ArmConstants.ROTATOR_MAXIMUM_VELOCITY
+        );
     }
 
     @Override
     public void init() {
+        armWaypointPath = ArmWaypointGraph.getInstance().generatePath(arm.getLastWaypoint(), target);
         currentIndex = 0;
-        armWaypointList = ArmWaypointGraph.getInstance().generatePath(arm.getLastWaypoint(), target);
-        currentWaypoint = armWaypointList.get(currentIndex);
-        previousWaypoint = currentWaypoint;
-        clock.startTiming();
+        changeWaypoint();
         running = true;
+
+        arm.setArmState(Arm.ArmState.TARGET_VELOCITY);
     }
 
     @Override
     public void loop() {
-        arm.moveArmToRadians(currentWaypoint.getArmAngle());
-        arm.moveRotatorToRadians(currentWaypoint.getRotatorAngle());
-        arm.setArmState(Arm.ArmState.TARGET);
+        arm.setArmPosition(currentArmProfile.getProfileVelocity(clock.getSeconds()));
+        arm.setRotatorPosition(currentRotatorProfile.getProfileVelocity(clock.getSeconds()));
         arm.setGripperState(currentWaypoint.getGripperState());
         arm.setWristState(currentWaypoint.getWristState());
 
-        // Detect servo action
-        long transitionTime = MINIMUM_TRANSITION_TIME;
-        if (currentWaypoint.getWristState() != previousWaypoint.getWristState() ||
-                currentWaypoint.getGripperState() != previousWaypoint.getGripperState())
-            transitionTime = SERVO_ACTION_TRANSITION_TIME;
-
-        if (clock.getMillis() > transitionTime &&
-                arm.isWithinTarget() &&
-                currentIndex + 1 < armWaypointList.size()) {
-            currentIndex++;
-            previousWaypoint = currentWaypoint;
-            currentWaypoint = armWaypointList.get(currentIndex);
-            clock.startTiming();
-        } else if (arm.isWithinTarget() && currentIndex + 1 == armWaypointList.size()) {
-            running = false;
+        if (currentWaypointDuration >= clock.getSeconds() && currentIndex + 1 < armWaypointPath.size()) {
+            changeWaypoint();
         }
-        //telemetry.addLine("GoToArmWaypoint State")
-        //        .addData("Clock MS", clock.getMillis())
-        //        .addData("armInTarget", arm.isWithinTarget())
-        //        .addData("currentIndex", currentIndex);
+        if (currentIndex == armWaypointPath.size() - 1)
+            running = false;
     }
 
     @Override
     public void stop(boolean interrupted) {
+        arm.setArmState(Arm.ArmState.TARGET_POSITION);
+        arm.setArmPosition(currentWaypoint.getArmAngle());
+        arm.setRotatorPosition(currentWaypoint.getRotatorAngle());
         arm.setLastWaypoint(target);
+    }
+
+    public void changeWaypoint() {
+        currentIndex++;
+        previousWaypoint = armWaypointPath.get(currentIndex - 1);
+        currentWaypoint = armWaypointPath.get(currentIndex);
+        currentArmProfile = armProfileGenerator.generateProfile(
+                previousWaypoint.getArmAngle(),
+                currentWaypoint.getArmAngle()
+        );
+        currentRotatorProfile = rotatorProfileGenerator.generateProfile(
+                previousWaypoint.getRotatorAngle(),
+                currentWaypoint.getRotatorAngle()
+        );
+        currentWaypointDuration = Math.max(currentArmProfile.getDuration(), currentRotatorProfile.getDuration());
+        isCurrentWaypointServoAction = currentWaypoint.getWristState() != previousWaypoint.getWristState() ||
+                currentWaypoint.getGripperState() != previousWaypoint.getGripperState();
+        clock.startTiming();
     }
 }

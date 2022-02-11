@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class Rotator extends Subsystem {
-    DcMotorEx rotator;
+public class Carousel extends Subsystem {
+    DcMotorEx carousel;
     static final double ratio = 7.5; // Carousel is 15 in, wheel is 2 in diameter.
 
     public double getSetpoint() {
@@ -23,10 +23,10 @@ public class Rotator extends Subsystem {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        rotator = hardwareMap.get(DcMotorEx.class, "carousel");
-        rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rotator.setVelocity(0, AngleUnit.DEGREES);
+        carousel = hardwareMap.get(DcMotorEx.class, "carousel");
+        carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        carousel.setVelocity(0, AngleUnit.DEGREES);
 
         setpoint = 0;
     }
@@ -43,11 +43,11 @@ public class Rotator extends Subsystem {
 
     @Override
     public void runPeriodic() {
-        rotator.setVelocity( ratio * setpoint, AngleUnit.DEGREES);
+        carousel.setVelocity( ratio * setpoint, AngleUnit.DEGREES);
     }
 
     @Override
     public void stop() {
-        rotator.setVelocity(0);
+        carousel.setVelocity(0);
     }
 }

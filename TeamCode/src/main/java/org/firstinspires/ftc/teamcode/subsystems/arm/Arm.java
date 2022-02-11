@@ -4,19 +4,20 @@ import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utils.AngularServo;
 
 public class Arm extends Subsystem {
     DcMotorEx arm;
     DcMotorEx rotator;
     AngularServo wrist;
     AngularServo gripper;
-    int armTarget;
-    int rotatorTarget;
+    int armTargetPosition;
+    int rotatorTargetPosition;
+    double armTargetVelocity;
+    double rotatorTargetVelocity;
     double wristTarget;
     double gripperTarget;
 
@@ -52,8 +53,10 @@ public class Arm extends Subsystem {
         rotator.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armTarget = 0;
-        rotatorTarget = 0;
+        armTargetPosition = 0;
+        rotatorTargetPosition = 0;
+        armTargetVelocity = 0;
+        rotatorTargetVelocity = 0;
 
         wrist = new AngularServo(
                 hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 4
@@ -69,7 +72,7 @@ public class Arm extends Subsystem {
         wristTarget = 0;
         gripperTarget = 0;
 
-        armState = ArmState.TARGET;
+        armState = ArmState.TARGET_POSITION;
 
         lastWaypoint = ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT;
 
@@ -78,27 +81,8 @@ public class Arm extends Subsystem {
 
         arm.setPositionPIDFCoefficients(7.5);
         rotator.setPositionPIDFCoefficients(2);
-
-        telemetry.log().add("arm PP%.2fI%.2fD%.2fF%.2f VP%.2fI%.2fD%.2fF%.2f",
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f
-        );
-        telemetry.log().add("rotator PP%.2fI%.2fD%.2fF%.2f VP%.2fI%.2fD%.2fF%.2f",
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f
-        );
+        arm.setVelocityPIDFCoefficients(10, 3, 0, 0);
+        rotator.setVelocityPIDFCoefficients(10, 3, 0, 0);
     }
 
     @Override
@@ -119,11 +103,17 @@ public class Arm extends Subsystem {
                 arm.setPower(0);
                 rotator.setPower(0);
                 break;
-            case TARGET:
+            case TARGET_POSITION:
                 arm.setPower(armTargetPower);
                 rotator.setPower(rotatorTargetPower);
-                arm.setTargetPosition(armTarget);
-                rotator.setTargetPosition(rotatorTarget);
+                arm.setTargetPosition(armTargetPosition);
+                rotator.setTargetPosition(rotatorTargetPosition);
+                break;
+            case TARGET_VELOCITY:
+                arm.setPower(armTargetPower);
+                rotator.setPower(rotatorTargetPower);
+                arm.setVelocity(armTargetVelocity);
+                rotator.setVelocity(rotatorTargetVelocity);
                 break;
         }
         // Wrist state handling
@@ -206,13 +196,19 @@ public class Arm extends Subsystem {
         return ticks / TICKS_PER_RADIAN;
     }
 
-    public void moveArmToRadians(double radians) {
-        armTarget = (int) Math.round(radiansToTicks(radians));
+    public void setArmPosition(double radians) {
+        armTargetPosition = (int) Math.round(radiansToTicks(radians));
 
     }
+    public void setRotatorPosition(double radians) {
+        rotatorTargetPosition = (int) Math.round(radiansToTicks(radians));
+    }
+    public void setArmVelocity(double angularRateRadians) {
+        armTargetVelocity = radiansToTicks(angularRateRadians);
+    }
 
-    public void moveRotatorToRadians(double radians) {
-        rotatorTarget = (int) Math.round(radiansToTicks(radians));
+    public void setRotatorVelocity(double angularRateRadians) {
+        rotatorTargetVelocity = radiansToTicks(angularRateRadians);
     }
 
     public boolean isWithinTarget() {
@@ -231,7 +227,7 @@ public class Arm extends Subsystem {
     }
 
     public enum ArmState {
-        IDLE, TARGET
+        IDLE, TARGET_POSITION, TARGET_VELOCITY
     }
 
     public enum WristState {
