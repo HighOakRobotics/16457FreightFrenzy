@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.arm;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,7 +21,7 @@ public class Arm extends Subsystem {
     double gripperTarget;
 
     double WRIST_UPRIGHT_POSITION = 0.0;
-    double WRIST_HORIZONTAL_POSITION = 0.75;
+    double WRIST_HORIZONTAL_POSITION = Math.PI / 4;
 
     double GRIPPER_OPEN_POSITION = 0.3;
     double GRIPPER_CLOSE_POSITION = 0.0;
@@ -76,20 +76,28 @@ public class Arm extends Subsystem {
         arm.setTargetPositionTolerance(10);
         rotator.setTargetPositionTolerance(10);
 
-        arm.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(7.5, 0, 3.625));
-        rotator.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(2, 0.1, 0.5));
+        arm.setPositionPIDFCoefficients(7.5);
+        rotator.setPositionPIDFCoefficients(2);
 
-        telemetry.log().add("arm P%.2f I%.2f D%.2f F%.2f",
+        telemetry.log().add("arm PP%.2fI%.2fD%.2fF%.2f VP%.2fI%.2fD%.2fF%.2f",
                 arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
                 arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
                 arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
-                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d,
+                arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f
         );
-        telemetry.log().add("rotator P%.2f I%.2f D%.2f F%.2f",
+        telemetry.log().add("rotator PP%.2fI%.2fD%.2fF%.2f VP%.2fI%.2fD%.2fF%.2f",
                 rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p,
                 rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).i,
                 rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).d,
-                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).f,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d,
+                rotator.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f
         );
     }
 

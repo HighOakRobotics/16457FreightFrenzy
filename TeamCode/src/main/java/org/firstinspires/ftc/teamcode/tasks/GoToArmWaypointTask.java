@@ -3,11 +3,10 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.util.Clock;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.ArmWaypoint;
-import org.firstinspires.ftc.teamcode.subsystems.ArmWaypointGraph;
+import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypoint;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class GoToArmWaypointTask extends Task {

@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
-import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrainMecanum;
-import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 
 public class GamepadDriveTask extends StartEndTask {
 

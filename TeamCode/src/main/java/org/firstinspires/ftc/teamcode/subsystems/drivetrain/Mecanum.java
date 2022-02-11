@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrainMecanum;
-import org.firstinspires.ftc.teamcode.subsystems.positioning.Position;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.positioning.Position;
 
 import java.util.function.Supplier;
 

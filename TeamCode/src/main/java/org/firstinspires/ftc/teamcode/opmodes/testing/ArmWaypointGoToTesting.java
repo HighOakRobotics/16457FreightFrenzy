@@ -5,8 +5,8 @@ import com.ftc11392.sequoia.task.SequentialTaskBundle;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.ArmWaypointGraph;
+import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
 
 @TeleOp

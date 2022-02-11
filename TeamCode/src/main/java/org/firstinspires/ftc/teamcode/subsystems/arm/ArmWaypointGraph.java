@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.arm;
 
 import java.util.Arrays;
 import java.util.EmptyStackException;

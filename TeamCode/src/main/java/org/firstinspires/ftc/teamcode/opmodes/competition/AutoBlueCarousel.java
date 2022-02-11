@@ -10,10 +10,10 @@ import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.subsystems.LegacyArm;
+import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
 import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
-import org.firstinspires.ftc.teamcode.subsystems.LegacyGripper;
-import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyGripper;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Rotator;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 

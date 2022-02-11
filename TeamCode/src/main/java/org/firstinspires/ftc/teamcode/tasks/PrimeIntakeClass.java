@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.util.Clock;
 
-import org.firstinspires.ftc.teamcode.subsystems.LegacyArm;
-import org.firstinspires.ftc.teamcode.subsystems.LegacyGripper;
+import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
+import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyGripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 public class PrimeIntakeClass extends Task {

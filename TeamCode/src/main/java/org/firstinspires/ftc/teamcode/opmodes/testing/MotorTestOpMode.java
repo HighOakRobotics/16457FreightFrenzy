@@ -4,11 +4,8 @@ import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.SequentialTaskBundle;
 import com.ftc11392.sequoia.task.WaitTask;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
 
 
 @TeleOp(name = "Motor Cycle Test", group = "Working Title")

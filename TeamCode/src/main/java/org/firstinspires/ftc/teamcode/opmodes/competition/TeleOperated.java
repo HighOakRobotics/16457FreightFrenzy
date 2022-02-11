@@ -5,10 +5,8 @@ import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.LegacyArm;
-import org.firstinspires.ftc.teamcode.subsystems.LegacyGripper;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Rotator;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
 

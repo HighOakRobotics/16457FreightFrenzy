@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-import org.firstinspires.ftc.teamcode.subsystems.roadrunner.Encoder;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.roadrunner.Encoder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

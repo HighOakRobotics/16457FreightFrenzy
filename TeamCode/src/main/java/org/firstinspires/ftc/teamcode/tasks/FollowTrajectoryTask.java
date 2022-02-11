@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.tasks;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.ftc11392.sequoia.task.Task;
 
-import org.firstinspires.ftc.teamcode.subsystems.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 
 import java.util.function.Supplier;
 

@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.drivetrain;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -38,11 +37,11 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.subsystems.positioning.Position;
-import org.firstinspires.ftc.teamcode.subsystems.roadrunner.AxesSigns;
-import org.firstinspires.ftc.teamcode.subsystems.roadrunner.BNO055IMUUtil;
-import org.firstinspires.ftc.teamcode.subsystems.roadrunner.DashboardUtil;
-import org.firstinspires.ftc.teamcode.subsystems.roadrunner.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.positioning.Position;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.roadrunner.AxesSigns;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.roadrunner.BNO055IMUUtil;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.roadrunner.DashboardUtil;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.roadrunner.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,20 +50,19 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveConstants.kV;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 
 @Config
 public class DriveTrainMecanum extends MecanumDrive {

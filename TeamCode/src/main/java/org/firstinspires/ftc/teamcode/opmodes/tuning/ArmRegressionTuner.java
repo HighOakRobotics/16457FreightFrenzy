@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.util.Pair;
-import org.firstinspires.ftc.teamcode.subsystems.LegacyArm;
+import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
 
 import java.util.Arrays;
 import java.util.LinkedList;
