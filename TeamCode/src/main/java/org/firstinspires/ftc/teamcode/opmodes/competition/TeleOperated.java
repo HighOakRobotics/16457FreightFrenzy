@@ -37,10 +37,19 @@ public class TeleOperated extends SequoiaOpMode {
         gamepad1H.leftButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
         gamepad1H.downButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_TRACKING));
 
-        gamepad1H.leftBumperToggleButton().risingWithCancel(new StartEndTask(
-                () -> arm.setGripperState(Arm.GripperState.OPEN),
-                () -> arm.setGripperState(Arm.GripperState.CLOSE)
-        ));
+        gamepad1H.leftBumperToggleButton().risingWithCancel(new InstantTask(() -> {
+            switch (arm.getGripperState()) {
+                case INTAKE:
+                case ELEMENT:
+                case TARGET:
+                case OPEN:
+                    arm.setGripperState(Arm.GripperState.CLOSE);
+                    break;
+                case CLOSE:
+                    arm.setGripperState(Arm.GripperState.OPEN);
+                    break;
+            }
+        }));
         gamepad1H.rightBumperButton().onPress(new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)));
 
         //made intake basically a copy of rotator, hopefully that works
