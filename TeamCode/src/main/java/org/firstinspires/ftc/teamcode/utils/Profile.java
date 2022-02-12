@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 public class Profile {
-    final PolynomialSplineFunction velocityProfile;
+    final UnivariateFunction velocityProfile;
     final double duration;
 
-    public Profile(PolynomialSplineFunction velocityProfile, double duration) {
+    public Profile(UnivariateFunction velocityProfile, double duration) {
         this.velocityProfile = velocityProfile;
         this.duration = duration;
     }
@@ -21,10 +22,6 @@ public class Profile {
 
     public boolean isProfileComplete(double timeDifference) {
         return timeDifference >= duration;
-    }
-
-    public PolynomialSplineFunction getVelocityProfile() {
-        return velocityProfile;
     }
 
     public double getDuration() {

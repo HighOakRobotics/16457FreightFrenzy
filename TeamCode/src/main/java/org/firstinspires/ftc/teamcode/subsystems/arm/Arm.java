@@ -29,8 +29,10 @@ public class Arm extends Subsystem {
     double GRIPPER_INTAKE_POSITION = 0.6;
     double GRIPPER_ELEMENT_POSITION = 0.25;
 
-    double armTargetPower = 0.8;
-    double rotatorTargetPower = 0.8;
+    double armPositioningTargetPower = 0.8;
+    double rotatorPositioningTargetPower = 0.8;
+    double armVelocityTargetPower = 1.0;
+    double rotatorVelocityTargetPower = 1.0;
     public final static double TICKS_PER_RADIAN = 85.5776129005;
 
     ArmState armState;
@@ -47,8 +49,8 @@ public class Arm extends Subsystem {
         rotator = hardwareMap.get(DcMotorEx.class, "rotator");
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setPower(armTargetPower);
-        rotator.setPower(rotatorTargetPower);
+        arm.setPower(armPositioningTargetPower);
+        rotator.setPower(rotatorPositioningTargetPower);
         arm.setTargetPosition(0);
         rotator.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -81,8 +83,8 @@ public class Arm extends Subsystem {
 
         arm.setPositionPIDFCoefficients(7.5);
         rotator.setPositionPIDFCoefficients(2);
-        arm.setVelocityPIDFCoefficients(10, 3, 0, 0);
-        rotator.setVelocityPIDFCoefficients(10, 3, 0, 0);
+        arm.setVelocityPIDFCoefficients(50, 3, 0, 0);
+        rotator.setVelocityPIDFCoefficients(50, 3, 0, 0);
     }
 
     @Override
@@ -104,14 +106,14 @@ public class Arm extends Subsystem {
                 rotator.setPower(0);
                 break;
             case TARGET_POSITION:
-                arm.setPower(armTargetPower);
-                rotator.setPower(rotatorTargetPower);
+                arm.setPower(armPositioningTargetPower);
+                rotator.setPower(rotatorPositioningTargetPower);
                 arm.setTargetPosition(armTargetPosition);
                 rotator.setTargetPosition(rotatorTargetPosition);
                 break;
             case TARGET_VELOCITY:
-                arm.setPower(armTargetPower);
-                rotator.setPower(rotatorTargetPower);
+                arm.setPower(armVelocityTargetPower);
+                rotator.setPower(rotatorVelocityTargetPower);
                 arm.setVelocity(armTargetVelocity);
                 rotator.setVelocity(rotatorTargetVelocity);
                 break;
@@ -150,8 +152,9 @@ public class Arm extends Subsystem {
         telemetry.addLine()
                 .addData("armRad", ticksToRadians(arm.getCurrentPosition()))
                 .addData("rotRad", ticksToRadians(rotator.getCurrentPosition()))
-                .addData("armCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
-                .addData("rotCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance());
+                .addData("armPosCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
+                .addData("rotPosCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance())
+                .addData("armVelAR", "%.2f %.2f", arm.getVelocity(), rotator.getVelocity());
     }
 
     @Override

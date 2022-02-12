@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import org.apache.commons.math3.analysis.function.Constant;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProfileGenerator {
@@ -21,9 +24,16 @@ public class ProfileGenerator {
         this.maximumAccelerationTime = maximumVelocity / maximumAcceleration;
         // Compute the total distance travelled from (de)acceleration
         this.accelerationRegimeDistance = maximumAccelerationTime * maximumVelocity;
+        System.out.println("maximumAccelerationTime" + maximumAccelerationTime);
+        System.out.println("accelerationRegimeDistance" + accelerationRegimeDistance);
     }
 
-    public Profile generateProfile(double difference) {
+    public Profile generateProfile(double rawDifference) {
+        if (rawDifference == 0)
+            return new Profile(new Constant(0), 0);
+
+        double difference = Math.abs(rawDifference);
+        int sign = rawDifference < 0 ? -1 : 1;
         // I have a suspicion that the way I'm computing things may introduce floating-point bugs
         // Oh well, too bad.
         double duration;
@@ -38,7 +48,7 @@ public class ProfileGenerator {
         if (unboundedTriangleTime <= maximumAccelerationTime) {
             // Add peak
             xList.add(unboundedTriangleTime);
-            yList.add(unboundedTriangleTime * maximumAcceleration);
+            yList.add(sign * unboundedTriangleTime * maximumAcceleration);
             // Add endpoint
             duration = 2 * unboundedTriangleTime;
             xList.add(duration);
@@ -46,15 +56,19 @@ public class ProfileGenerator {
         } else {
             // Add acceleration point
             xList.add(maximumAccelerationTime);
-            yList.add(maximumVelocity);
+            yList.add(sign * maximumVelocity);
             // Add constant velocity regime
             xList.add(maximumAccelerationTime + ((difference - accelerationRegimeDistance) / maximumVelocity));
-            yList.add(maximumVelocity);
+            yList.add(sign * maximumVelocity);
             // Add endpoint
             duration = 2 * maximumAccelerationTime + ((difference - accelerationRegimeDistance) / maximumVelocity);
             xList.add(duration);
             yList.add(0.0);
         }
+
+        System.out.println("profileGeneratePointsX:"+ Arrays.toString(xList.toArray()));
+        System.out.println("profileGeneratePointsY:"+ Arrays.toString(yList.toArray()));
+
         // Generate a function by linearly interpolating between points, and create a profile
         return new Profile(
                 linearInterpolator.interpolate(

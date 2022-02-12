@@ -2,7 +2,17 @@ package org.firstinspires.ftc.teamcode.tasks;
 
 import com.ftc11392.sequoia.task.Task;
 
-public class LiftTask extends Task {
+import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+
+public class ArmTrackingTask extends Task {
+
+    Arm arm;
+
+
+    public ArmTrackingTask(Arm arm) {
+        this.arm = arm;
+    }
+
     @Override
     public void init() {
 

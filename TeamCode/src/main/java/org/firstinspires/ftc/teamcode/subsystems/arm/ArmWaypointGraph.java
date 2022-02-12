@@ -23,6 +23,7 @@ public class ArmWaypointGraph {
     private static ArmWaypointGraph instance;
 
     public Map<ArmWaypointName, ArmWaypoint> waypointMap;
+    public Map<ArmWaypoint.ArmWaypointLocation, ArmWaypoint> trackingWaypoints;
 
     private ArmWaypointGraph() {
         waypointMap = new HashMap<ArmWaypointName, ArmWaypoint>() {{
@@ -160,8 +161,12 @@ public class ArmWaypointGraph {
         waypointMap.get(ArmWaypointName.BACK_DOWN_CLOSED)
                 .addNeighbor(
                         waypointMap.get(ArmWaypointName.BACK_DOWN_READY));
-
-        System.out.println(Arrays.toString(waypointMap.entrySet().toArray()));
+        // Tracking zones
+        trackingWaypoints = new HashMap<ArmWaypoint.ArmWaypointLocation, ArmWaypoint>() {{
+            put(ArmWaypoint.ArmWaypointLocation.RIGHT, waypointMap.get(ArmWaypointName.RIGHT_TRACKING));
+            put(ArmWaypoint.ArmWaypointLocation.LEFT, waypointMap.get(ArmWaypointName.LEFT_TRACKING));
+            put(ArmWaypoint.ArmWaypointLocation.BACK, waypointMap.get(ArmWaypointName.BACK_TRACKING));
+        }};
     }
 
     public List<ArmWaypoint> generatePath(ArmWaypointName from, ArmWaypointName to) {

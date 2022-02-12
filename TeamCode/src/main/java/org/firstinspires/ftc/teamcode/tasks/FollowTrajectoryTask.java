@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.ftc11392.sequoia.task.Task;
 
@@ -11,10 +12,17 @@ public class FollowTrajectoryTask extends Task {
     private final Mecanum mecanum;
     private final Supplier<Trajectory> trajectory;
 
-    public FollowTrajectoryTask (Mecanum mecanum, Supplier<Trajectory> trajectory) {
+    public FollowTrajectoryTask(Mecanum mecanum, Supplier<Trajectory> trajectory) {
         this.mecanum = mecanum;
         this.trajectory = trajectory;
         this.running = true;
+    }
+
+    public FollowTrajectoryTask(Mecanum mecanum, Pose2d pose) {
+        this(mecanum, () -> mecanum.mecanum()
+                .trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build());
     }
 
     @Override
@@ -24,7 +32,7 @@ public class FollowTrajectoryTask extends Task {
 
     @Override
     public void loop() {
-        if(!mecanum.mecanum().isBusy()) {
+        if (!mecanum.mecanum().isBusy()) {
             running = false;
             return;
         }
