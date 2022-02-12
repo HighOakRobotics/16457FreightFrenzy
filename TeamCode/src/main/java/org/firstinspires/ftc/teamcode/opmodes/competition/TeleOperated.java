@@ -6,9 +6,12 @@ import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
+import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +20,7 @@ public class TeleOperated extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
     private final Carousel carousel = new Carousel();
     private final Intake intake = new Intake();
+    private final Arm arm = new Arm();
 
     @Override
     public void initTriggers() {
@@ -27,6 +31,17 @@ public class TeleOperated extends SequoiaOpMode {
     @Override
     public void runTriggers() {
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
+
+        gamepad1H.upButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+        gamepad1H.rightButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
+        gamepad1H.leftButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
+        gamepad1H.downButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_TRACKING));
+
+        gamepad1H.leftBumperToggleButton().risingWithCancel(new StartEndTask(
+                () -> arm.setGripperState(Arm.GripperState.OPEN),
+                () -> arm.setGripperState(Arm.GripperState.CLOSE)
+        ));
+        gamepad1H.rightBumperButton().onPress(new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)));
 
         //made intake basically a copy of rotator, hopefully that works
         gamepad1H.yToggleButton().risingWithCancel(new StartEndTask(() -> {

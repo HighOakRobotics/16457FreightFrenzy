@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.AngularServo;
 
 public class Arm extends Subsystem {
+    boolean managementLock;
+
     DcMotorEx arm;
     DcMotorEx rotator;
     AngularServo wrist;
@@ -23,17 +25,20 @@ public class Arm extends Subsystem {
 
     double WRIST_UPRIGHT_POSITION = 0.0;
     double WRIST_HORIZONTAL_POSITION = Math.PI / 4;
+    double WRIST_TRACKING_STAGING_POSITION = Math.PI / 4 + Math.PI / 3 + Math.PI / 12;
 
-    double GRIPPER_OPEN_POSITION = 0.3;
+    double GRIPPER_OPEN_POSITION = 0.4;
     double GRIPPER_CLOSE_POSITION = 0.0;
     double GRIPPER_INTAKE_POSITION = 0.6;
     double GRIPPER_ELEMENT_POSITION = 0.25;
 
-    double armPositioningTargetPower = 0.8;
-    double rotatorPositioningTargetPower = 0.8;
+    double armPositioningTargetPower = 1.0;
+    double rotatorPositioningTargetPower = 1.0;
     double armVelocityTargetPower = 1.0;
     double rotatorVelocityTargetPower = 1.0;
     public final static double TICKS_PER_RADIAN = 85.5776129005;
+
+    double trackingHeight;
 
     ArmState armState;
 
@@ -45,6 +50,8 @@ public class Arm extends Subsystem {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
+        managementLock = false;
+
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         rotator = hardwareMap.get(DcMotorEx.class, "rotator");
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,6 +78,8 @@ public class Arm extends Subsystem {
         gripper.setPosition(0);
         gripperState = GripperState.CLOSE;
 
+        trackingHeight = 0;
+
         wristTarget = 0;
         gripperTarget = 0;
 
@@ -82,9 +91,9 @@ public class Arm extends Subsystem {
         rotator.setTargetPositionTolerance(10);
 
         arm.setPositionPIDFCoefficients(7.5);
-        rotator.setPositionPIDFCoefficients(2);
-        arm.setVelocityPIDFCoefficients(50, 3, 0, 0);
-        rotator.setVelocityPIDFCoefficients(50, 3, 0, 0);
+        rotator.setPositionPIDFCoefficients(3);
+        arm.setVelocityPIDFCoefficients(30, 5, 0, 0);
+        rotator.setVelocityPIDFCoefficients(30, 5, 0, 0);
     }
 
     @Override
@@ -129,6 +138,9 @@ public class Arm extends Subsystem {
             case TARGET:
                 wrist.setPosition(wristTarget);
                 break;
+            case TRACKING_STAGING:
+                wrist.setPosition(WRIST_TRACKING_STAGING_POSITION);
+                break;
         }
         // Gripper state handling
         switch (gripperState) {
@@ -160,6 +172,18 @@ public class Arm extends Subsystem {
     @Override
     public void stop() {
 
+    }
+
+    public boolean controlLocked() {
+        return managementLock;
+    }
+
+    public void controlLock() {
+        managementLock = true;
+    }
+
+    public void uncontrolLock() {
+        managementLock = false;
     }
 
     public ArmState getArmState() {
@@ -203,9 +227,11 @@ public class Arm extends Subsystem {
         armTargetPosition = (int) Math.round(radiansToTicks(radians));
 
     }
+
     public void setRotatorPosition(double radians) {
         rotatorTargetPosition = (int) Math.round(radiansToTicks(radians));
     }
+
     public void setArmVelocity(double angularRateRadians) {
         armTargetVelocity = radiansToTicks(angularRateRadians);
     }
@@ -234,7 +260,7 @@ public class Arm extends Subsystem {
     }
 
     public enum WristState {
-        UPRIGHT, HORIZONTAL, TARGET
+        UPRIGHT, HORIZONTAL, TARGET, TRACKING_STAGING
     }
 
     public enum GripperState {

@@ -11,6 +11,8 @@ import java.util.List;
 
 public class GoToArmWaypointTask extends Task {
 
+    boolean didNotInitialize;
+
     final long MINIMUM_TRANSITION_TIME = 250;
     final long SERVO_ACTION_TRANSITION_TIME = 750;
 
@@ -30,6 +32,13 @@ public class GoToArmWaypointTask extends Task {
 
     @Override
     public void init() {
+        didNotInitialize = false;
+        if (arm.controlLocked()) {
+            didNotInitialize = true;
+            running = false;
+            return;
+        }
+        arm.controlLock();
         currentIndex = 0;
         armWaypointList = ArmWaypointGraph.getInstance().generatePath(arm.getLastWaypoint(), target);
         currentWaypoint = armWaypointList.get(currentIndex);
@@ -40,6 +49,7 @@ public class GoToArmWaypointTask extends Task {
 
     @Override
     public void loop() {
+        if (didNotInitialize) return;
         arm.setArmPosition(currentWaypoint.getArmAngle());
         arm.setRotatorPosition(currentWaypoint.getRotatorAngle());
         arm.setArmState(Arm.ArmState.TARGET_POSITION);
@@ -66,6 +76,8 @@ public class GoToArmWaypointTask extends Task {
 
     @Override
     public void stop(boolean interrupted) {
+        if (didNotInitialize) return;
         arm.setLastWaypoint(target);
+        arm.uncontrolLock();
     }
 }

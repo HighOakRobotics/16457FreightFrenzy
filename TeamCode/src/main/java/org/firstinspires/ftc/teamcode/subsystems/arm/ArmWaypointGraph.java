@@ -57,19 +57,19 @@ public class ArmWaypointGraph {
                     ArmWaypoint.ArmWaypointType.TRACKING,
                     ArmWaypoint.ArmWaypointLocation.LEFT,
                     -1 * Math.PI / 2, 2 * Math.PI / 3,
-                    Arm.WristState.TARGET, Arm.GripperState.TARGET
+                    Arm.WristState.TRACKING_STAGING, Arm.GripperState.TARGET
             ));
             put(ArmWaypointName.RIGHT_TRACKING, new ArmWaypoint(
                     ArmWaypoint.ArmWaypointType.TRACKING,
                     ArmWaypoint.ArmWaypointLocation.RIGHT,
                     Math.PI / 2, 2 * Math.PI / 3,
-                    Arm.WristState.TARGET, Arm.GripperState.TARGET
+                    Arm.WristState.TRACKING_STAGING, Arm.GripperState.TARGET
             ));
             put(ArmWaypointName.BACK_TRACKING, new ArmWaypoint(
                     ArmWaypoint.ArmWaypointType.TRACKING,
                     ArmWaypoint.ArmWaypointLocation.BACK,
                     -1 * Math.PI, 2 * Math.PI / 3,
-                    Arm.WristState.TARGET, Arm.GripperState.TARGET
+                    Arm.WristState.TRACKING_STAGING, Arm.GripperState.TARGET
             ));
             // Intake staging waypoints
             put(ArmWaypointName.INTAKE_DOWN_UPRIGHT, new ArmWaypoint(
