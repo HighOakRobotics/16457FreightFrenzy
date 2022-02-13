@@ -55,8 +55,8 @@ public class GoToArmWaypointProfileTask extends Task {
 
     @Override
     public void loop() {
-        arm.setArmPosition(currentArmProfile.getProfileVelocity(clock.getSeconds()));
-        arm.setRotatorPosition(currentRotatorProfile.getProfileVelocity(clock.getSeconds()));
+        arm.setArmAngle(currentArmProfile.getProfileVelocity(clock.getSeconds()));
+        arm.setRotatorAngle(currentRotatorProfile.getProfileVelocity(clock.getSeconds()));
         arm.setGripperState(currentWaypoint.getGripperState());
         arm.setWristState(currentWaypoint.getWristState());
 
@@ -70,8 +70,8 @@ public class GoToArmWaypointProfileTask extends Task {
     @Override
     public void stop(boolean interrupted) {
         arm.setArmState(Arm.ArmState.TARGET_POSITION);
-        arm.setArmPosition(currentWaypoint.getArmAngle());
-        arm.setRotatorPosition(currentWaypoint.getRotatorAngle());
+        arm.setArmAngle(currentWaypoint.getArmAngle());
+        arm.setRotatorAngle(currentWaypoint.getRotatorAngle());
         arm.setLastWaypoint(target);
     }
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.AngularServo;
 
 public class Arm extends Subsystem {
-    boolean managementLock;
+    boolean controlLock;
 
     DcMotorEx arm;
     DcMotorEx rotator;
@@ -24,13 +24,13 @@ public class Arm extends Subsystem {
     double gripperTarget;
 
     double WRIST_UPRIGHT_POSITION = 0.0;
-    double WRIST_HORIZONTAL_POSITION = Math.PI / 4;
-    double WRIST_TRACKING_STAGING_POSITION = Math.PI / 4 + Math.PI / 3 + Math.PI / 12;
+    double WRIST_HORIZONTAL_POSITION = Math.PI / 2 - Math.PI / 24;
+    double WRIST_TRACKING_STAGING_POSITION = 2 * Math.PI / 3 + Math.PI / 2;
 
-    double GRIPPER_OPEN_POSITION = 0.4;
+    double GRIPPER_OPEN_POSITION = Math.PI / 3;
     double GRIPPER_CLOSE_POSITION = 0.0;
-    double GRIPPER_INTAKE_POSITION = 0.6;
-    double GRIPPER_ELEMENT_POSITION = 0.25;
+    double GRIPPER_INTAKE_POSITION = Math.PI / 3;
+    double GRIPPER_ELEMENT_POSITION = Math.PI / 3;
 
     double armPositioningTargetPower = 1.0;
     double rotatorPositioningTargetPower = 1.0;
@@ -50,7 +50,7 @@ public class Arm extends Subsystem {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
-        managementLock = false;
+        controlLock = false;
 
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         rotator = hardwareMap.get(DcMotorEx.class, "rotator");
@@ -68,13 +68,12 @@ public class Arm extends Subsystem {
         rotatorTargetVelocity = 0;
 
         wrist = new AngularServo(
-                hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 4
-        );
+                hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 2 - Math.PI / 6);
         wrist.setPosition(0);
         wristState = WristState.UPRIGHT;
 
         gripper = new AngularServo(
-                hardwareMap.get(Servo.class, "gripper"), 3 * Math.PI / 4);
+                hardwareMap.get(Servo.class, "gripper"), 3 * Math.PI / 2 - Math.PI / 6);
         gripper.setPosition(0);
         gripperState = GripperState.CLOSE;
 
@@ -90,7 +89,7 @@ public class Arm extends Subsystem {
         arm.setTargetPositionTolerance(10);
         rotator.setTargetPositionTolerance(10);
 
-        arm.setPositionPIDFCoefficients(7.5);
+        arm.setPositionPIDFCoefficients(7);
         rotator.setPositionPIDFCoefficients(3);
         arm.setVelocityPIDFCoefficients(30, 5, 0, 0);
         rotator.setVelocityPIDFCoefficients(30, 5, 0, 0);
@@ -166,7 +165,8 @@ public class Arm extends Subsystem {
                 .addData("rotRad", ticksToRadians(rotator.getCurrentPosition()))
                 .addData("armPosCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
                 .addData("rotPosCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance())
-                .addData("armVelAR", "%.2f %.2f", arm.getVelocity(), rotator.getVelocity());
+                .addData("armVelAR", "%.2f %.2f", arm.getVelocity(), rotator.getVelocity())
+                .addData("states", "arm%s wrist%s gripper%s", armState, wristState, gripperState);
     }
 
     @Override
@@ -175,15 +175,15 @@ public class Arm extends Subsystem {
     }
 
     public boolean controlLocked() {
-        return managementLock;
+        return controlLock;
     }
 
-    public void controlLock() {
-        managementLock = true;
+    public void lockControl() {
+        controlLock = true;
     }
 
-    public void uncontrolLock() {
-        managementLock = false;
+    public void unlockControl() {
+        controlLock = false;
     }
 
     public ArmState getArmState() {
@@ -223,13 +223,29 @@ public class Arm extends Subsystem {
         return ticks / TICKS_PER_RADIAN;
     }
 
-    public void setArmPosition(double radians) {
+    public void setArmAngle(double radians) {
         armTargetPosition = (int) Math.round(radiansToTicks(radians));
 
     }
 
-    public void setRotatorPosition(double radians) {
+    public void setRotatorAngle(double radians) {
         rotatorTargetPosition = (int) Math.round(radiansToTicks(radians));
+    }
+
+    public void setWristTarget(double radians) {
+        wristTarget = radians;
+    }
+
+    public void setGripperTarget(double radians) {
+        gripperTarget = radians;
+    }
+
+    public double getArmAngle() {
+        return ticksToRadians(arm.getCurrentPosition());
+    }
+
+    public double getRotatorAngle() {
+        return ticksToRadians(rotator.getCurrentPosition());
     }
 
     public void setArmVelocity(double angularRateRadians) {

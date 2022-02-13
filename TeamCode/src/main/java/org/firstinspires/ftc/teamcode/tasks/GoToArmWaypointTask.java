@@ -38,7 +38,7 @@ public class GoToArmWaypointTask extends Task {
             running = false;
             return;
         }
-        arm.controlLock();
+        arm.lockControl();
         currentIndex = 0;
         armWaypointList = ArmWaypointGraph.getInstance().generatePath(arm.getLastWaypoint(), target);
         currentWaypoint = armWaypointList.get(currentIndex);
@@ -50,8 +50,8 @@ public class GoToArmWaypointTask extends Task {
     @Override
     public void loop() {
         if (didNotInitialize) return;
-        arm.setArmPosition(currentWaypoint.getArmAngle());
-        arm.setRotatorPosition(currentWaypoint.getRotatorAngle());
+        arm.setArmAngle(currentWaypoint.getArmAngle());
+        arm.setRotatorAngle(currentWaypoint.getRotatorAngle());
         arm.setArmState(Arm.ArmState.TARGET_POSITION);
         arm.setGripperState(currentWaypoint.getGripperState());
         arm.setWristState(currentWaypoint.getWristState());
@@ -78,6 +78,6 @@ public class GoToArmWaypointTask extends Task {
     public void stop(boolean interrupted) {
         if (didNotInitialize) return;
         arm.setLastWaypoint(target);
-        arm.uncontrolLock();
+        arm.unlockControl();
     }
 }
