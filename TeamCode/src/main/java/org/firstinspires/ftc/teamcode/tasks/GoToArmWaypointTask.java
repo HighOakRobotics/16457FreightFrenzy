@@ -14,7 +14,7 @@ public class GoToArmWaypointTask extends Task {
     boolean didNotInitialize;
 
     final long MINIMUM_TRANSITION_TIME = 250;
-    final long MAXIMUM_TRANSITION_TIME = 2000;
+    final long MAXIMUM_TRANSITION_TIME = 4000;
     final long SERVO_ACTION_TRANSITION_TIME = 750;
 
     Arm arm;
@@ -57,7 +57,9 @@ public class GoToArmWaypointTask extends Task {
             arm.setArmState(Arm.ArmState.TARGET_POSITION);
             arm.setGripperState(previousWaypoint.getGripperState());
             arm.setWristState(previousWaypoint.getWristState());
+            arm.setLastWaypoint(previousWaypoint.getName());
             running = false;
+            didNotInitialize = true;
             return;
         }
 
