@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.utils.ProfileGenerator;
 
 public class DuckProfileTask extends Task {
 
-    public final double SLIDING_TIME = 5.0;
-    public final double SLIDING_SETPOINT = 50;
+    public final double SLIDING_TIME = 0;
+    public final double SLIDING_SETPOINT = 0;
 
     Carousel carousel;
     Profile profile;
@@ -21,7 +21,7 @@ public class DuckProfileTask extends Task {
     public DuckProfileTask(Carousel carousel, int multiplier) {
         this.carousel = carousel;
         this.profile = new ProfileGenerator(10, 20)
-                .generateProfile(multiplier * 100);
+                .generateProfile(multiplier * 7.25);
         this.clock = new Clock();
         this.multiplier = multiplier;
     }

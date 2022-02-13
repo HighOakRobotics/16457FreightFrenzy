@@ -29,11 +29,17 @@ public class ArmTrackingTask extends Task {
     ArmWaypointGraph.ArmWaypointName trackingWaypointName;
 
     double currentHeight;
+    Double heightOverride;
 
     public ArmTrackingTask(Arm arm, DoubleSupplier raiseSupplier, DoubleSupplier lowerSupplier) {
         this.arm = arm;
         this.raiseSupplier = raiseSupplier;
         this.lowerSupplier = lowerSupplier;
+    }
+
+    public ArmTrackingTask(Arm arm, double heightOverride) {
+        this(arm, () -> 0.0, () -> 0.0);
+        this.heightOverride = heightOverride;
     }
 
     private double computeArmAngle(double desiredHeight) {
@@ -73,6 +79,7 @@ public class ArmTrackingTask extends Task {
         double input = INPUT_MULTIPLIER * (raiseSupplier.getAsDouble() - lowerSupplier.getAsDouble());
         if (raiseSupplier.getAsDouble() + lowerSupplier.getAsDouble() < 0.01) running = false;
         currentHeight = Range.clip(currentHeight + input, MIN_DESIRED_HEIGHT, MAX_DESIRED_HEIGHT);
+        if (heightOverride != null) currentHeight = heightOverride;
         double armAngle = computeArmAngle(currentHeight);
         double wristAngle = armAngle + Math.PI / 2;
 

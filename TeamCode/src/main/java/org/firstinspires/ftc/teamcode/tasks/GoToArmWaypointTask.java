@@ -14,6 +14,7 @@ public class GoToArmWaypointTask extends Task {
     boolean didNotInitialize;
 
     final long MINIMUM_TRANSITION_TIME = 250;
+    final long MAXIMUM_TRANSITION_TIME = 2000;
     final long SERVO_ACTION_TRANSITION_TIME = 750;
 
     Arm arm;
@@ -50,6 +51,16 @@ public class GoToArmWaypointTask extends Task {
     @Override
     public void loop() {
         if (didNotInitialize) return;
+        if (clock.getMillis() > MAXIMUM_TRANSITION_TIME) {
+            arm.setArmAngle(previousWaypoint.getArmAngle());
+            arm.setRotatorAngle(previousWaypoint.getRotatorAngle());
+            arm.setArmState(Arm.ArmState.TARGET_POSITION);
+            arm.setGripperState(previousWaypoint.getGripperState());
+            arm.setWristState(previousWaypoint.getWristState());
+            running = false;
+            return;
+        }
+
         arm.setArmAngle(currentWaypoint.getArmAngle());
         arm.setRotatorAngle(currentWaypoint.getRotatorAngle());
         arm.setArmState(Arm.ArmState.TARGET_POSITION);
@@ -61,11 +72,11 @@ public class GoToArmWaypointTask extends Task {
         if (currentWaypoint.getWristState() != previousWaypoint.getWristState() ||
                 currentWaypoint.getGripperState() != previousWaypoint.getGripperState())
             transitionTime = SERVO_ACTION_TRANSITION_TIME;
-
         if (clock.getMillis() > transitionTime &&
                 arm.isWithinTarget() &&
                 currentIndex + 1 < armWaypointList.size()) {
             currentIndex++;
+            arm.setLastWaypoint(currentWaypoint.getName());
             previousWaypoint = currentWaypoint;
             currentWaypoint = armWaypointList.get(currentIndex);
             clock.startTiming();

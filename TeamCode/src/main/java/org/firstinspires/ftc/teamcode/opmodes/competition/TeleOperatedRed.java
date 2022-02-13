@@ -7,6 +7,6 @@ public class TeleOperatedRed extends TeleOperatedCommon{
 
     @Override
     protected int getDuckMultiplier() {
-        return 1;
+        return -1;
     }
 }

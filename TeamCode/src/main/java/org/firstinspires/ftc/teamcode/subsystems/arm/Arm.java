@@ -90,7 +90,7 @@ public class Arm extends Subsystem {
         rotator.setTargetPositionTolerance(5);
 
         arm.setPositionPIDFCoefficients(6);
-        rotator.setPositionPIDFCoefficients(3);
+        rotator.setPositionPIDFCoefficients(4.5);
         arm.setVelocityPIDFCoefficients(25, 5, 0, 0);
         rotator.setVelocityPIDFCoefficients(25, 5, 0, 0);
     }

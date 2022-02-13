@@ -110,6 +110,8 @@ public class ArmWaypointGraph {
                     Arm.WristState.HORIZONTAL, Arm.GripperState.ELEMENT
             ));
         }};
+        // Make sure waypoints know their names
+        applyNamesToWaypoints();
         // Safe travel waypoint links
         //// Main Arc
         waypointMap.get(ArmWaypointName.RIGHT_SAFE)
@@ -219,6 +221,12 @@ public class ArmWaypointGraph {
 
         public PathingNode getParent() {
             return parent;
+        }
+    }
+
+    public void applyNamesToWaypoints() {
+        for (Map.Entry<ArmWaypointGraph.ArmWaypointName, ArmWaypoint> entry : waypointMap.entrySet()) {
+            entry.getValue().setName(entry.getKey());
         }
     }
 
