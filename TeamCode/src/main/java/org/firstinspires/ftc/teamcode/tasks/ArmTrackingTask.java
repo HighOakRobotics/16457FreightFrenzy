@@ -17,6 +17,8 @@ public class ArmTrackingTask extends Task {
     private static final double MIN_DESIRED_HEIGHT = 4.5;
     private static final double MAX_DESIRED_HEIGHT = 23;
 
+    private static final double MAX_STOP_HEIGHT_ERROR = 0.5;
+
     private static final double INPUT_MULTIPLIER = 0.5;
 
     boolean didNotInitialize;
@@ -30,16 +32,19 @@ public class ArmTrackingTask extends Task {
 
     double currentHeight;
     Double heightOverride;
+    boolean stopOnTarget;
 
     public ArmTrackingTask(Arm arm, DoubleSupplier raiseSupplier, DoubleSupplier lowerSupplier) {
         this.arm = arm;
         this.raiseSupplier = raiseSupplier;
         this.lowerSupplier = lowerSupplier;
+        this.stopOnTarget = false;
     }
 
     public ArmTrackingTask(Arm arm, double heightOverride) {
         this(arm, () -> 0.0, () -> 0.0);
         this.heightOverride = heightOverride;
+        this.stopOnTarget = true;
     }
 
     private double computeArmAngle(double desiredHeight) {
@@ -77,7 +82,8 @@ public class ArmTrackingTask extends Task {
         if (didNotInitialize) return;
         if (!running) return;
         double input = INPUT_MULTIPLIER * (raiseSupplier.getAsDouble() - lowerSupplier.getAsDouble());
-        if (raiseSupplier.getAsDouble() + lowerSupplier.getAsDouble() < 0.01) running = false;
+        if (raiseSupplier.getAsDouble() + lowerSupplier.getAsDouble() < 0.01 && !stopOnTarget) running = false;
+        if (stopOnTarget && Math.abs(computeArmHeight(arm.getArmAngle()) - currentHeight) < MAX_STOP_HEIGHT_ERROR) running = false;
         currentHeight = Range.clip(currentHeight + input, MIN_DESIRED_HEIGHT, MAX_DESIRED_HEIGHT);
         if (heightOverride != null) currentHeight = heightOverride;
         double armAngle = computeArmAngle(currentHeight);
@@ -85,11 +91,6 @@ public class ArmTrackingTask extends Task {
 
         arm.setArmAngle(armAngle);
         arm.setWristTarget(wristAngle);
-
-        telemetry.addLine("ArmTrackingTask")
-                .addData("height", currentHeight)
-                .addData("armAngle", armAngle)
-                .addData("wristAngle", wristAngle);
     }
 
     @Override
