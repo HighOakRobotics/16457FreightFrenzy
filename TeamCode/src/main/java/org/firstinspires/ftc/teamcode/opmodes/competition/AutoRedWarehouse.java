@@ -31,14 +31,14 @@ import java.util.concurrent.TimeUnit;
 @Autonomous
 public class AutoRedWarehouse extends SequoiaOpMode {
 
-    DuckDetector duckDetector = new DuckDetector(50,140,230);
+    DuckDetector duckDetector = new DuckDetector(75,165,255);
     Arm arm = new Arm();
     Mecanum mecanum = new Mecanum();
     Carousel carousel = new Carousel();
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(16, -66, 0));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(14, -66, 0));
     }
 
     @Override
@@ -50,23 +50,23 @@ public class AutoRedWarehouse extends SequoiaOpMode {
                                 new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING),
                                 new SwitchTask(new HashMap<Object, Task>() {{
                                     put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 5)
+                                            new ArmTrackingTask(arm, 6)
                                     ));
                                     put(DuckDetector.DuckPipeline.DuckPosition.CENTER, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 12)
+                                            new ArmTrackingTask(arm, 13)
                                     ));
                                     put(DuckDetector.DuckPipeline.DuckPosition.RIGHT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 18)
+                                            new ArmTrackingTask(arm, 19)
                                     ));
                                 }}, () -> position),
-                                new WaitTask(500, TimeUnit.MILLISECONDS)
+                                new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(-12, -50, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0))
                 ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-12, -42, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -42, 0)),
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-12, -50, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0)),
                 new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
 
                 new FollowTrajectoryTask(mecanum, new Pose2d(0, -66, 0)),
@@ -76,4 +76,5 @@ public class AutoRedWarehouse extends SequoiaOpMode {
                 new InstantTask(this::requestOpModeStop)
         ));
     }
+
 }

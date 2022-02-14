@@ -21,7 +21,7 @@ public class DuckProfileTask extends Task {
     public DuckProfileTask(Carousel carousel, int multiplier) {
         this.carousel = carousel;
         this.profile = new ProfileGenerator(10, 20)
-                .generateProfile(multiplier * 7.25);
+                .generateProfile(multiplier * 7.5);
         this.clock = new Clock();
         this.multiplier = multiplier;
     }

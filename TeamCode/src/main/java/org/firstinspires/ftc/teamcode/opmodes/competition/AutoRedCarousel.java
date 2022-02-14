@@ -2,24 +2,24 @@ package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.ftc11392.sequoia.SequoiaOpMode;
+import com.ftc11392.sequoia.task.ConditionalTask;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.ParallelTaskBundle;
 import com.ftc11392.sequoia.task.SequentialTaskBundle;
 import com.ftc11392.sequoia.task.SwitchTask;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.task.WaitTask;
+import com.ftc11392.sequoia.util.Clock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
-import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
 import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
-import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyGripper;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
@@ -34,6 +34,7 @@ public class AutoRedCarousel extends SequoiaOpMode {
     Mecanum mecanum = new Mecanum();
     Arm arm = new Arm();
     Carousel carousel = new Carousel();
+    Clock clock = new Clock();
 
     @Override
     public void initTriggers() {
@@ -42,6 +43,7 @@ public class AutoRedCarousel extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
+        clock.startTiming();
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
                 new FollowTrajectoryTask(mecanum, new Pose2d(-60, -64, 0)),
@@ -52,28 +54,28 @@ public class AutoRedCarousel extends SequoiaOpMode {
                                 new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING),
                                 new SwitchTask(new HashMap<Object, Task>() {{
                                     put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 5)
+                                            new ArmTrackingTask(arm, 6)
                                     ));
                                     put(DuckDetector.DuckPipeline.DuckPosition.CENTER, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 12)
+                                            new ArmTrackingTask(arm, 13)
                                     ));
                                     put(DuckDetector.DuckPipeline.DuckPosition.RIGHT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 18)
+                                            new ArmTrackingTask(arm, 19)
                                     ));
                                 }}, () -> position),
-                                new WaitTask(500, TimeUnit.MILLISECONDS)
+                                new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(-12, -50, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0))
                 ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-12, -42, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -42, 0)),
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-12, -50, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0)),
                 new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
 
                 new FollowTrajectoryTask(mecanum, new Pose2d(0, -66, 0)),
                 new FollowTrajectoryTask(mecanum, new Pose2d(50, -66, 0)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(50, -40, 0)),
+                //new FollowTrajectoryTask(mecanum, new Pose2d(50, -40, 0)),
 
                 new InstantTask(this::requestOpModeStop)
         ));
