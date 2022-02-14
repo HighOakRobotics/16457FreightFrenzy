@@ -47,6 +47,14 @@ public class ArmWaypoint {
         return neighbors;
     }
 
+    public void setName(ArmWaypointGraph.ArmWaypointName name) {
+        this.name = name;
+    }
+
+    public ArmWaypointGraph.ArmWaypointName getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
         return "ArmWaypoint{" +
@@ -62,6 +70,7 @@ public class ArmWaypoint {
 
     ArmWaypointType type;
     ArmWaypointLocation location;
+    ArmWaypointGraph.ArmWaypointName name;
     List<ArmWaypoint> neighbors;
     double rotatorAngle;
     double armAngle;

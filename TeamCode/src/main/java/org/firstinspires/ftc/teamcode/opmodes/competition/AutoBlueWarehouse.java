@@ -28,26 +28,22 @@ import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
 
 @Autonomous(group = "Working Title")
-public class AutoBlueCarousel extends SequoiaOpMode {
+public class AutoBlueWarehouse extends SequoiaOpMode {
 
-    DuckDetector duckDetector = new DuckDetector(70, 160, 250);
+    DuckDetector duckDetector = new DuckDetector(90, 170, 260);
     Mecanum mecanum = new Mecanum();
     Arm arm = new Arm();
     Carousel carousel = new Carousel();
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-40, 66, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(8, 66, Math.PI));
     }
 
     @Override
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
-                new FollowTrajectoryTask(mecanum, new Pose2d(-46, 50, Math.PI / 2)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-60, 64, 0)),
-                new DuckProfileTask(carousel, 1),
-
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
                                 new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
