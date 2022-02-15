@@ -58,8 +58,8 @@ public class GoToArmWaypointTask extends Task {
             arm.setGripperState(previousWaypoint.getGripperState());
             arm.setWristState(previousWaypoint.getWristState());
             arm.setLastWaypoint(previousWaypoint.getName());
+            arm.unlockControl();
             running = false;
-            didNotInitialize = true;
             return;
         }
 
@@ -90,7 +90,6 @@ public class GoToArmWaypointTask extends Task {
     @Override
     public void stop(boolean interrupted) {
         if (didNotInitialize) return;
-        arm.setLastWaypoint(target);
         arm.unlockControl();
     }
 }
