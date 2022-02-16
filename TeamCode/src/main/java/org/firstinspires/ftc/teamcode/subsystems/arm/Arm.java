@@ -87,7 +87,7 @@ public class Arm extends Subsystem {
         lastWaypoint = ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT;
 
         arm.setTargetPositionTolerance(10);
-        rotator.setTargetPositionTolerance(2);
+        rotator.setTargetPositionTolerance(5);
 
         arm.setPositionPIDFCoefficients(6);
         rotator.setPositionPIDFCoefficients(4.5);

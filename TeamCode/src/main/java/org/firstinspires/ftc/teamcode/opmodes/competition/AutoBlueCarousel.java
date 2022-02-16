@@ -37,7 +37,7 @@ public class AutoBlueCarousel extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-40, 66, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-37, 66, Math.PI));
     }
 
     @Override
