@@ -15,7 +15,7 @@ public class AngularServo {
     }
 
     public void setPosition(double position) {
-        double signal = Range.clip(position,0,range) / range;
-        servo.setPosition(signal);
+        double signal = Range.clip(position, 0.0, range) / range;
+        servo.setPosition(Range.clip(signal, 0.0, 1.0));
     }
 }

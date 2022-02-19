@@ -67,7 +67,7 @@ public class AutoRedCarousel extends SequoiaOpMode {
                         ),
                         new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0))
                 ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -42, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-10, -38, 0)),
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
                 new FollowTrajectoryTask(mecanum, new Pose2d(-10, -50, 0)),

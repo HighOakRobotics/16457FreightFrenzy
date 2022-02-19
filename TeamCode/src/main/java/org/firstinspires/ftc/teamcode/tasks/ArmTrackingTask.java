@@ -15,7 +15,8 @@ public class ArmTrackingTask extends Task {
     private static final double ARM_LENGTH = 11.3385827;
     private static final double ARM_HEIGHT = 0.5;
     private static final double MIN_DESIRED_HEIGHT = 4.5;
-    private static final double MAX_DESIRED_HEIGHT = 23;
+    private static final double MAX_DESIRED_HEIGHT = 20;
+    private static final double WRIST_LOCK_HEIGHT = 17;
 
     private static final double MAX_STOP_HEIGHT_ERROR = 0.5;
 
@@ -88,6 +89,8 @@ public class ArmTrackingTask extends Task {
         if (heightOverride != null) currentHeight = heightOverride;
         double armAngle = computeArmAngle(currentHeight);
         double wristAngle = armAngle + Math.PI / 2;
+
+        if (currentHeight >= WRIST_LOCK_HEIGHT) wristAngle = Math.PI;
 
         arm.setArmAngle(armAngle);
         arm.setWristTarget(wristAngle);
