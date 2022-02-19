@@ -60,14 +60,14 @@ public class ArmTrackingTask extends Task {
 
     @Override
     public void init() {
+        location = ArmWaypointGraph.getInstance().waypointMap.get(arm.getLastWaypoint()).getLocation();
         didNotInitialize = false;
-        if (arm.controlLocked()) {
+        if (arm.controlLocked() || location == ArmWaypoint.ArmWaypointLocation.FRONT) {
             didNotInitialize = true;
             running = false;
             return;
         }
         arm.lockControl();
-        location = ArmWaypointGraph.getInstance().waypointMap.get(arm.getLastWaypoint()).getLocation();
         trackingWaypointName = ArmWaypointGraph.getInstance().trackingWaypoints.get(location);
         if (trackingWaypointName != null) {
             running = true;

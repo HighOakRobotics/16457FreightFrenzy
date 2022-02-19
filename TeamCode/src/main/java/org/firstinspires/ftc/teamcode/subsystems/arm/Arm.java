@@ -29,7 +29,7 @@ public class Arm extends Subsystem {
 
     double GRIPPER_OPEN_POSITION = Math.PI / 3;
     double GRIPPER_CLOSE_POSITION = 0.0;
-    double GRIPPER_INTAKE_POSITION = Math.PI / 3;
+    double GRIPPER_INTAKE_POSITION = Math.PI / 4;
     double GRIPPER_ELEMENT_POSITION = Math.PI / 3;
 
     double armPositioningTargetPower = 1.0;
@@ -91,8 +91,8 @@ public class Arm extends Subsystem {
 
         arm.setPositionPIDFCoefficients(6.0);
         rotator.setPositionPIDFCoefficients(4.5);
-        arm.setVelocityPIDFCoefficients(30, 5, 0, 0);
-        rotator.setVelocityPIDFCoefficients(30, 5, 2, 0);
+        arm.setVelocityPIDFCoefficients(25, 5, 0, 0);
+        rotator.setVelocityPIDFCoefficients(25, 5, 2, 0);
     }
 
     @Override
@@ -166,7 +166,8 @@ public class Arm extends Subsystem {
                 .addData("armPosCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
                 .addData("rotPosCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance())
                 .addData("armVelAR", "%.2f %.2f", arm.getVelocity(), rotator.getVelocity())
-                .addData("states", "arm%s wrist%s gripper%s", armState, wristState, gripperState);
+                .addData("states", "arm%s wrist%s gripper%s", armState, wristState, gripperState)
+                .addData("lastWaypoint", lastWaypoint);
     }
 
     @Override

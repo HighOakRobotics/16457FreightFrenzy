@@ -15,7 +15,7 @@ public class GoToArmWaypointTask extends Task {
 
     final long MINIMUM_TRANSITION_TIME = 500;
     final long MAXIMUM_TRANSITION_TIME = 4000;
-    final long SERVO_ACTION_TRANSITION_TIME = 1000;
+    final long SERVO_ACTION_TRANSITION_TIME = 750;
 
     Arm arm;
     ArmWaypointGraph.ArmWaypointName target;
@@ -59,6 +59,7 @@ public class GoToArmWaypointTask extends Task {
             arm.setWristState(previousWaypoint.getWristState());
             arm.setLastWaypoint(previousWaypoint.getName());
             arm.unlockControl();
+            currentWaypoint = previousWaypoint;
             running = false;
             return;
         }
@@ -90,6 +91,7 @@ public class GoToArmWaypointTask extends Task {
     @Override
     public void stop(boolean interrupted) {
         if (didNotInitialize) return;
+        arm.setLastWaypoint(currentWaypoint.getName());
         arm.unlockControl();
     }
 }

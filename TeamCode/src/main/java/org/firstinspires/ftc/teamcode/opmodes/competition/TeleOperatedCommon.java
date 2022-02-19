@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
+import org.firstinspires.ftc.teamcode.tasks.ArmWatchdogTask;
 import org.firstinspires.ftc.teamcode.tasks.DuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
@@ -26,6 +27,9 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
+        // Watchdog to ensure nothing gets permalocked. TODO remove when locking bugs have been resolved
+        scheduler.schedule(new ArmWatchdogTask(arm));
+
         gamepad1H.sticksButton(0.01).onPressWithCancel(new GamepadDriveTask(gamepad1, drivetrain));
 
         gamepad1H.leftTriggerButton(0.01).onPress(new ArmTrackingTask(arm, () -> gamepad1.right_trigger, () -> gamepad1.left_trigger));
