@@ -24,12 +24,12 @@ public class Arm extends Subsystem {
     double gripperTarget;
 
     double WRIST_UPRIGHT_POSITION = 0.0;
-    double WRIST_HORIZONTAL_POSITION = Math.PI / 2 - Math.PI / 24;
+    double WRIST_HORIZONTAL_POSITION = Math.PI / 2 - Math.PI / 18;
     double WRIST_TRACKING_STAGING_POSITION = 2 * Math.PI / 3 + Math.PI / 2;
 
     double GRIPPER_OPEN_POSITION = Math.PI / 3;
     double GRIPPER_CLOSE_POSITION = 0.0;
-    double GRIPPER_INTAKE_POSITION = Math.PI / 4;
+    double GRIPPER_INTAKE_POSITION = Math.PI / 5.5;
     double GRIPPER_ELEMENT_POSITION = Math.PI / 3;
 
     double armPositioningTargetPower = 1.0;
@@ -89,10 +89,10 @@ public class Arm extends Subsystem {
         arm.setTargetPositionTolerance(10);
         rotator.setTargetPositionTolerance(5);
 
-        arm.setPositionPIDFCoefficients(6.0);
+        arm.setPositionPIDFCoefficients(6.5);
         rotator.setPositionPIDFCoefficients(4.5);
-        arm.setVelocityPIDFCoefficients(25, 5, 0, 0);
-        rotator.setVelocityPIDFCoefficients(25, 5, 2, 0);
+        arm.setVelocityPIDFCoefficients(27.5, 5, 0, 0);
+        rotator.setVelocityPIDFCoefficients(27.5, 5, 2, 0);
     }
 
     @Override
@@ -112,18 +112,21 @@ public class Arm extends Subsystem {
             case IDLE:
                 arm.setPower(0);
                 rotator.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 break;
             case TARGET_POSITION:
                 arm.setPower(armPositioningTargetPower);
                 rotator.setPower(rotatorPositioningTargetPower);
                 arm.setTargetPosition(armTargetPosition);
                 rotator.setTargetPosition(rotatorTargetPosition);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case TARGET_VELOCITY:
                 arm.setPower(armVelocityTargetPower);
                 rotator.setPower(rotatorVelocityTargetPower);
                 arm.setVelocity(armTargetVelocity);
                 rotator.setVelocity(rotatorTargetVelocity);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
         }
         // Wrist state handling

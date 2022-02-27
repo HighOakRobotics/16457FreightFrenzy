@@ -13,7 +13,7 @@ public class GamepadDriveTask extends StartEndTask {
             drive.mecanum().setDriveDST(
                     () -> gamepad.right_bumper ? gamepad.left_stick_y : gamepad.left_stick_y * 0.5,
                     () -> gamepad.right_bumper ? gamepad.left_stick_x : gamepad.left_stick_x * 0.5,
-                    () -> gamepad.right_bumper ? gamepad.right_stick_x : gamepad.right_stick_x * 0.8
+                    () -> gamepad.right_bumper ? gamepad.right_stick_x : gamepad.right_stick_x * 0.6
             );
         }, () -> {
             drive.mecanum().idle();

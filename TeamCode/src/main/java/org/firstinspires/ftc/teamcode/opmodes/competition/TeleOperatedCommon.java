@@ -46,7 +46,9 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
         }));
 
         // PANIC! control of the arm is blocked because of a Task's failure to unlock control.
-        gamepad2H.bButton().onPress(new InstantTask(arm::unlockControl));
+        gamepad2H.yButton().onPress(new InstantTask(arm::unlockControl));
+        gamepad2H.upButton().onPress(new InstantTask(() -> arm.initialize(hardwareMap)));
+        gamepad2H.downButton().onPress(new InstantTask(() -> arm.setArmState(Arm.ArmState.IDLE)));
 
         gamepad1H.leftBumperButton().onPress(new InstantTask(() -> {
             if (arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY)

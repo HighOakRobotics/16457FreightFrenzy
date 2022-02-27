@@ -13,7 +13,7 @@ public class GoToArmWaypointTask extends Task {
 
     boolean didNotInitialize;
 
-    final long MINIMUM_TRANSITION_TIME = 500;
+    final long MINIMUM_TRANSITION_TIME = 250;
     final long MAXIMUM_TRANSITION_TIME = 4000;
     final long SERVO_ACTION_TRANSITION_TIME = 750;
 
