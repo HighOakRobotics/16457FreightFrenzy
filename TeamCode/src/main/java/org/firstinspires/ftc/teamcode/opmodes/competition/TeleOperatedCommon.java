@@ -70,7 +70,7 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
 
         //made intake basically a copy of rotator, hopefully that works
         gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> {
-            intake.setSetpoint(-60);
+            intake.setSetpoint(-1000);
         }, () -> {
             intake.setSetpoint(0);
         }));

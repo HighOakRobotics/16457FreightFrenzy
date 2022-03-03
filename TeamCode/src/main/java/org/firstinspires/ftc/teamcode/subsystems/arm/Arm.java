@@ -36,7 +36,8 @@ public class Arm extends Subsystem {
     double rotatorPositioningTargetPower = 1.0;
     double armVelocityTargetPower = 1.0;
     double rotatorVelocityTargetPower = 1.0;
-    public final static double TICKS_PER_RADIAN = 85.5776129005;
+    public final static double TICKS_PER_RADIAN_ROTATOR = 85.5776129005;
+    public final static double TICKS_PER_RADIAN_ARM = 226.811709;
 
     double trackingHeight;
 
@@ -91,8 +92,8 @@ public class Arm extends Subsystem {
 
         arm.setPositionPIDFCoefficients(6.5);
         rotator.setPositionPIDFCoefficients(4.5);
-        arm.setVelocityPIDFCoefficients(27.5, 5, 0, 0);
-        rotator.setVelocityPIDFCoefficients(27.5, 5, 2, 0);
+        arm.setVelocityPIDFCoefficients(10, 5, 0, 0);
+        rotator.setVelocityPIDFCoefficients(10, 5, 2, 0);
     }
 
     @Override
@@ -164,8 +165,8 @@ public class Arm extends Subsystem {
         }
 
         telemetry.addLine()
-                .addData("armRad", ticksToRadians(arm.getCurrentPosition()))
-                .addData("rotRad", ticksToRadians(rotator.getCurrentPosition()))
+                .addData("armRad", ticksToRadiansRotator(arm.getCurrentPosition()))
+                .addData("rotRad", ticksToRadiansRotator(rotator.getCurrentPosition()))
                 .addData("armPosCTET", "%d %d %d %d", arm.getCurrentPosition(), arm.getTargetPosition(), Math.abs(arm.getCurrentPosition() - arm.getTargetPosition()), arm.getTargetPositionTolerance())
                 .addData("rotPosCTET", "%d %d %d %d", rotator.getCurrentPosition(), rotator.getTargetPosition(), Math.abs(rotator.getCurrentPosition() - rotator.getTargetPosition()), rotator.getTargetPositionTolerance())
                 .addData("armVelAR", "%.2f %.2f", arm.getVelocity(), rotator.getVelocity())
@@ -215,25 +216,37 @@ public class Arm extends Subsystem {
     }
 
 
-    public double radiansToTicks(double radians) {
-        return radians * TICKS_PER_RADIAN;
+    public double radiansToTicksRotator(double radians) {
+        return radians * TICKS_PER_RADIAN_ROTATOR;
     }
 
-    public double radiansToTicks(double angle, AngleUnit angleUnit) {
-        return radiansToTicks(angleUnit.toRadians(angle));
+    public double radiansToTicksRotator(double angle, AngleUnit angleUnit) {
+        return radiansToTicksRotator(angleUnit.toRadians(angle));
     }
 
-    public double ticksToRadians(int ticks) {
-        return ticks / TICKS_PER_RADIAN;
+    public double ticksToRadiansRotator(int ticks) {
+        return ticks / TICKS_PER_RADIAN_ROTATOR;
+    }
+
+    public double radiansToTicksArm(double radians) {
+        return radians * TICKS_PER_RADIAN_ARM;
+    }
+
+    public double radiansToTicksArm(double angle, AngleUnit angleUnit) {
+        return radiansToTicksArm(angleUnit.toRadians(angle));
+    }
+
+    public double ticksToRadiansArm(int ticks) {
+        return ticks / TICKS_PER_RADIAN_ARM;
     }
 
     public void setArmAngle(double radians) {
-        armTargetPosition = (int) Math.round(radiansToTicks(radians));
+        armTargetPosition = (int) Math.round(radiansToTicksArm(radians));
 
     }
 
     public void setRotatorAngle(double radians) {
-        rotatorTargetPosition = (int) Math.round(radiansToTicks(radians));
+        rotatorTargetPosition = (int) Math.round(radiansToTicksRotator(radians));
     }
 
     public void setWristTarget(double radians) {
@@ -245,19 +258,19 @@ public class Arm extends Subsystem {
     }
 
     public double getArmAngle() {
-        return ticksToRadians(arm.getCurrentPosition());
+        return ticksToRadiansArm(arm.getCurrentPosition());
     }
 
     public double getRotatorAngle() {
-        return ticksToRadians(rotator.getCurrentPosition());
+        return ticksToRadiansRotator(rotator.getCurrentPosition());
     }
 
     public void setArmVelocity(double angularRateRadians) {
-        armTargetVelocity = radiansToTicks(angularRateRadians);
+        armTargetVelocity = radiansToTicksArm(angularRateRadians);
     }
 
     public void setRotatorVelocity(double angularRateRadians) {
-        rotatorTargetVelocity = radiansToTicks(angularRateRadians);
+        rotatorTargetVelocity = radiansToTicksRotator(angularRateRadians);
     }
 
     public boolean isWithinTarget() {
