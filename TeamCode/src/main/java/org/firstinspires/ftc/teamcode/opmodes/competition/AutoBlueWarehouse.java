@@ -68,6 +68,9 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
                 new FollowTrajectoryTask(mecanum, new Pose2d(50, 66, 0)),
                 new FollowTrajectoryTask(mecanum, new Pose2d(50, 40, 0)),
 
+                // If the first one failed
+                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
+
                 new InstantTask(this::requestOpModeStop)
         ));
     }

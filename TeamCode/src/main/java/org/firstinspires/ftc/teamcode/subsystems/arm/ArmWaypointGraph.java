@@ -124,9 +124,9 @@ public class ArmWaypointGraph {
                 .addNeighbor(
                         waypointMap.get(ArmWaypointName.BACK_SAFE));
         //// Alternate Paths
-         waypointMap.get(ArmWaypointName.RIGHT_SAFE)
-                .addNeighbor(
-                        waypointMap.get(ArmWaypointName.LEFT_SAFE));
+        //waypointMap.get(ArmWaypointName.RIGHT_SAFE)
+        //        .addNeighbor(
+        //                waypointMap.get(ArmWaypointName.LEFT_SAFE));
         //waypointMap.get(ArmWaypointName.RIGHT_SAFE)
         //        .addNeighbor(
         //                waypointMap.get(ArmWaypointName.BACK_SAFE));

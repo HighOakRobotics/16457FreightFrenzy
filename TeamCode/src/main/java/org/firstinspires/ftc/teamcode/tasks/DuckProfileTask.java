@@ -10,11 +10,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 
 public class DuckProfileTask extends Task {
 
-    final double TRAVELLING_DISTANCE = 6;
+    final double TRAVELLING_DISTANCE = 8;
     final double SLIDING_SETPOINT = 20;
     final double SLIDING_TIME = 0.5;
 
-    final double VELOCITY_CONSTRAINT = 18;
+    final double VELOCITY_CONSTRAINT = 15 ;
     final double ACCELERATION_CONSTRAINT = 10;
 
     double direction;

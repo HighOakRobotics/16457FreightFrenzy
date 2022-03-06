@@ -71,12 +71,12 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
 
         //made intake basically a copy of rotator, hopefully that works
         gamepad1H.aToggleButton().risingWithCancel(new StartEndTask(() -> {
-            intake.setSetpoint(-1000);
+            intake.setSetpoint(-1500);
         }, () -> {
             intake.setSetpoint(0);
         }));
 
-        gamepad1H.yButton().onPress(new DuckProfileTask(carousel, getDuckMultiplier()));
+        gamepad1H.yButton().onPress(new LegacyDuckProfileTask(carousel, getDuckMultiplier()));
     }
 
     protected abstract int getDuckMultiplier();

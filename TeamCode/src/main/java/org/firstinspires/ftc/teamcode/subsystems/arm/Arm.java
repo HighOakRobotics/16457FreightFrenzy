@@ -17,6 +17,7 @@ public class Arm extends Subsystem {
     AngularServo wrist;
     AngularServo gripper;
     int armTargetPosition;
+
     int rotatorTargetPosition;
     double armTargetVelocity;
     double rotatorTargetVelocity;
@@ -36,7 +37,7 @@ public class Arm extends Subsystem {
     double rotatorPositioningTargetPower = 1.0;
     double armVelocityTargetPower = 1.0;
     double rotatorVelocityTargetPower = 1.0;
-    public final static double TICKS_PER_RADIAN_ROTATOR = 85.5776129005;
+    public final static double TICKS_PER_RADIAN_ROTATOR = 753.2 / (2 * Math.PI);
     public final static double TICKS_PER_RADIAN_ARM = 226.811709;
 
     double trackingHeight;
@@ -89,12 +90,12 @@ public class Arm extends Subsystem {
 
 
         arm.setTargetPositionTolerance(10);
-        rotator.setTargetPositionTolerance(5);
+        rotator.setTargetPositionTolerance(10);
 
         arm.setPositionPIDFCoefficients(6.5);
         rotator.setPositionPIDFCoefficients(4.5);
         arm.setVelocityPIDFCoefficients(10, 5, 2, 0);
-        rotator.setVelocityPIDFCoefficients(15, 5, 2, 0);
+        rotator.setVelocityPIDFCoefficients(20, 1, 5, 0);
     }
 
     @Override
