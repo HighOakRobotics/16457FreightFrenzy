@@ -24,8 +24,6 @@ public class ProfileGenerator {
         this.maximumAccelerationTime = maximumVelocity / maximumAcceleration;
         // Compute the total distance travelled from (de)acceleration
         this.accelerationRegimeDistance = maximumAccelerationTime * maximumVelocity;
-        System.out.println("maximumAccelerationTime" + maximumAccelerationTime);
-        System.out.println("accelerationRegimeDistance" + accelerationRegimeDistance);
     }
 
     public Profile generateProfile(double rawDifference) {
@@ -65,9 +63,6 @@ public class ProfileGenerator {
             xList.add(duration);
             yList.add(0.0);
         }
-
-        System.out.println("profileGeneratePointsX:"+ Arrays.toString(xList.toArray()));
-        System.out.println("profileGeneratePointsY:"+ Arrays.toString(yList.toArray()));
 
         // Generate a function by linearly interpolating between points, and create a profile
         return new Profile(

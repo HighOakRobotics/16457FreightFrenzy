@@ -12,8 +12,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
 import org.firstinspires.ftc.teamcode.tasks.ArmWatchdogTask;
 import org.firstinspires.ftc.teamcode.tasks.DuckProfileTask;
+import org.firstinspires.ftc.teamcode.tasks.LegacyDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.GamepadDriveTask;
-import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
+import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
 public abstract class TeleOperatedCommon extends SequoiaOpMode {
     private final Mecanum drivetrain = new Mecanum();
@@ -35,14 +36,14 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
         gamepad1H.leftTriggerButton(0.01).onPress(new ArmTrackingTask(arm, () -> gamepad1.right_trigger, () -> gamepad1.left_trigger));
         gamepad1H.rightTriggerButton(0.01).onPress(new ArmTrackingTask(arm, () -> gamepad1.right_trigger, () -> gamepad1.left_trigger));
 
-        gamepad1H.upButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
-        gamepad1H.rightButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
-        gamepad1H.leftButton().onPress(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
+        gamepad1H.upButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+        gamepad1H.rightButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
+        gamepad1H.leftButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
         gamepad1H.downButton().onPress(new InstantTask(() -> {
             if (arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.BACK_DOWN_READY)
-                scheduler.schedule(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_TRACKING));
+                scheduler.schedule(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_TRACKING));
             else
-                scheduler.schedule(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_DOWN_READY));
+                scheduler.schedule(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.BACK_DOWN_READY));
         }));
 
         // PANIC! control of the arm is blocked because of a Task's failure to unlock control.
@@ -52,9 +53,9 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
 
         gamepad1H.leftBumperButton().onPress(new InstantTask(() -> {
             if (arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY)
-                scheduler.schedule(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT));
+                scheduler.schedule(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT));
             else if (arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT)
-                scheduler.schedule(new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+                scheduler.schedule(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
             else switch (arm.getGripperState()) {
                     case INTAKE:
                     case ELEMENT:

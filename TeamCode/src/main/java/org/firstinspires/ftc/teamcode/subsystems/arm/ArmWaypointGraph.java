@@ -38,13 +38,13 @@ public class ArmWaypointGraph {
                     ArmWaypoint.ArmWaypointType.FIXED,
                     ArmWaypoint.ArmWaypointLocation.LEFT,
                     -1 * Math.PI / 2, 2 * Math.PI / 3,
-                    Arm.WristState.UPRIGHT, Arm.GripperState.CLOSE
+                    Arm.WristState.TRACKING_STAGING, Arm.GripperState.CLOSE
             ));
             put(ArmWaypointName.RIGHT_SAFE, new ArmWaypoint(
                     ArmWaypoint.ArmWaypointType.FIXED,
                     ArmWaypoint.ArmWaypointLocation.RIGHT,
                     Math.PI / 2, 2 * Math.PI / 3,
-                    Arm.WristState.UPRIGHT, Arm.GripperState.CLOSE
+                    Arm.WristState.TRACKING_STAGING, Arm.GripperState.CLOSE
             ));
             put(ArmWaypointName.BACK_SAFE, new ArmWaypoint(
                     ArmWaypoint.ArmWaypointType.FIXED,
@@ -124,12 +124,12 @@ public class ArmWaypointGraph {
                 .addNeighbor(
                         waypointMap.get(ArmWaypointName.BACK_SAFE));
         //// Alternate Paths
-        waypointMap.get(ArmWaypointName.RIGHT_SAFE)
+         waypointMap.get(ArmWaypointName.RIGHT_SAFE)
                 .addNeighbor(
                         waypointMap.get(ArmWaypointName.LEFT_SAFE));
-        waypointMap.get(ArmWaypointName.RIGHT_SAFE)
-                .addNeighbor(
-                        waypointMap.get(ArmWaypointName.BACK_SAFE));
+        //waypointMap.get(ArmWaypointName.RIGHT_SAFE)
+        //        .addNeighbor(
+        //                waypointMap.get(ArmWaypointName.BACK_SAFE));
         waypointMap.get(ArmWaypointName.INTAKE_SAFE)
                 .addNeighbor(
                         waypointMap.get(ArmWaypointName.BACK_SAFE));

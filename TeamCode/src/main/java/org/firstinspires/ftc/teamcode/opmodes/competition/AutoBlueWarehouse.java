@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.competition;
 
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -17,15 +16,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
-import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyArm;
 import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
-import org.firstinspires.ftc.teamcode.subsystems.legacy.LegacyGripper;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
-import org.firstinspires.ftc.teamcode.tasks.DuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
-import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
+import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
 @Autonomous(group = "Working Title")
 public class AutoBlueWarehouse extends SequoiaOpMode {
@@ -46,7 +42,7 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
         scheduler.schedule(new SequentialTaskBundle(
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
-                                new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
+                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
                                 new SwitchTask(new HashMap<Object, Task>() {{
                                     put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
                                             new ArmTrackingTask(arm, 6)
@@ -66,7 +62,7 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
                 new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0)),
-                new GoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
+                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
 
                 new FollowTrajectoryTask(mecanum, new Pose2d(0, 66, 0)),
                 new FollowTrajectoryTask(mecanum, new Pose2d(50, 66, 0)),

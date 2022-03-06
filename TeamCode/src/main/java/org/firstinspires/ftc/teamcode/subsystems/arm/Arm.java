@@ -87,13 +87,14 @@ public class Arm extends Subsystem {
 
         lastWaypoint = ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT;
 
+
         arm.setTargetPositionTolerance(10);
         rotator.setTargetPositionTolerance(5);
 
         arm.setPositionPIDFCoefficients(6.5);
         rotator.setPositionPIDFCoefficients(4.5);
-        arm.setVelocityPIDFCoefficients(10, 5, 0, 0);
-        rotator.setVelocityPIDFCoefficients(10, 5, 2, 0);
+        arm.setVelocityPIDFCoefficients(10, 5, 2, 0);
+        rotator.setVelocityPIDFCoefficients(15, 5, 2, 0);
     }
 
     @Override
@@ -121,13 +122,23 @@ public class Arm extends Subsystem {
                 arm.setTargetPosition(armTargetPosition);
                 rotator.setTargetPosition(rotatorTargetPosition);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case TARGET_VELOCITY:
-                arm.setPower(armVelocityTargetPower);
-                rotator.setPower(rotatorVelocityTargetPower);
-                arm.setVelocity(armTargetVelocity);
-                rotator.setVelocity(rotatorTargetVelocity);
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (armTargetVelocity > 0) {
+                    arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    arm.setVelocity(armTargetVelocity);
+                } else {
+                    arm.setTargetPosition(arm.getCurrentPosition());
+                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+                if (rotatorTargetVelocity > 0) {
+                    rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rotator.setVelocity(rotatorTargetVelocity);
+                } else {
+                    rotator.setTargetPosition(rotator.getCurrentPosition());
+                    rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
                 break;
         }
         // Wrist state handling
@@ -176,7 +187,7 @@ public class Arm extends Subsystem {
 
     @Override
     public void stop() {
-
+        
     }
 
     public boolean controlLocked() {

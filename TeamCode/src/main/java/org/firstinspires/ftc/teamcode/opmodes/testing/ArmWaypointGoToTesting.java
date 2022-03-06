@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
-import org.firstinspires.ftc.teamcode.tasks.GoToArmWaypointTask;
+import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
 @TeleOp
 public class ArmWaypointGoToTesting extends SequoiaOpMode {
@@ -22,15 +22,15 @@ public class ArmWaypointGoToTesting extends SequoiaOpMode {
     @Override
     public void runTriggers() {
         scheduler.schedule(new SequentialTaskBundle(
-                new GoToArmWaypointTask(
+                new LegacyGoToArmWaypointTask(
                         arm, ArmWaypointGraph.ArmWaypointName.BACK_DOWN_UPRIGHT
                 ),
                 new WaitTask(1),
-                new GoToArmWaypointTask(
+                new LegacyGoToArmWaypointTask(
                         arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY
                 ),
                 new WaitTask(1),
-                new GoToArmWaypointTask(
+                new LegacyGoToArmWaypointTask(
                         arm, ArmWaypointGraph.ArmWaypointName.BACK_DOWN_READY
                 )
         ));
