@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes.competition;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.StartEndTask;
+import com.ftc11392.sequoia.task.Task;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.tasks.ArmPowerOverrideTask;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
 import org.firstinspires.ftc.teamcode.tasks.ArmWatchdogTask;
 import org.firstinspires.ftc.teamcode.tasks.DuckProfileTask;
@@ -48,8 +50,8 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
 
         // PANIC! control of the arm is blocked because of a Task's failure to unlock control.
         gamepad2H.yButton().onPress(new InstantTask(arm::unlockControl));
-        gamepad2H.upButton().onPress(new InstantTask(() -> arm.initialize(hardwareMap)));
-        gamepad2H.downButton().onPress(new InstantTask(() -> arm.setArmState(Arm.ArmState.IDLE)));
+        gamepad2H.sticksButton(0.05).onPressWithCancel(new ArmPowerOverrideTask(arm, gamepad2));
+        gamepad2H.xButton().onPress(new InstantTask(arm::stopAndResetEncoders));
 
         gamepad1H.leftBumperButton().onPress(new InstantTask(() -> {
             if (arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY)

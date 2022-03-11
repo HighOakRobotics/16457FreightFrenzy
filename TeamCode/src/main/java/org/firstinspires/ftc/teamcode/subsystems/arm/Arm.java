@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.AngularServo;
@@ -19,6 +20,8 @@ public class Arm extends Subsystem {
     int armTargetPosition;
 
     int rotatorTargetPosition;
+    double armTargetPower;
+    double rotatorTargetPower;
     double armTargetVelocity;
     double rotatorTargetVelocity;
     double wristTarget;
@@ -68,6 +71,8 @@ public class Arm extends Subsystem {
         rotatorTargetPosition = 0;
         armTargetVelocity = 0;
         rotatorTargetVelocity = 0;
+        armTargetPower = 0;
+        rotatorTargetPower = 0;
 
         wrist = new AngularServo(
                 hardwareMap.get(Servo.class, "wrist"), 3 * Math.PI / 2 - Math.PI / 6);
@@ -141,6 +146,12 @@ public class Arm extends Subsystem {
                     rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
+            case TARGET_POWER:
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rotator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.setPower(armTargetPower);
+                rotator.setPower(rotatorTargetPower);
+                break;
         }
         // Wrist state handling
         switch (wristState) {
@@ -188,7 +199,7 @@ public class Arm extends Subsystem {
 
     @Override
     public void stop() {
-        
+
     }
 
     public boolean controlLocked() {
@@ -261,6 +272,19 @@ public class Arm extends Subsystem {
         rotatorTargetPosition = (int) Math.round(radiansToTicksRotator(radians));
     }
 
+    public void setArmTargetPower(double power) {
+        armTargetPower = Range.clip(power, -1, 1);
+    }
+
+    public void stopAndResetEncoders() {
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void setRotatorTargetPower(double power) {
+        rotatorTargetPower = Range.clip(power, -1, 1);
+    }
+
     public void setWristTarget(double radians) {
         wristTarget = radians;
     }
@@ -301,7 +325,7 @@ public class Arm extends Subsystem {
     }
 
     public enum ArmState {
-        IDLE, TARGET_POSITION, TARGET_VELOCITY
+        IDLE, TARGET_POSITION, TARGET_VELOCITY, TARGET_POWER
     }
 
     public enum WristState {
