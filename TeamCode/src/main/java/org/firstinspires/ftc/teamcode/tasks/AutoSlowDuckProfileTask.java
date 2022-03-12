@@ -1,54 +1,64 @@
 package org.firstinspires.ftc.teamcode.tasks;
 
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.util.Clock;
 
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
-import org.firstinspires.ftc.teamcode.utils.Profile;
-import org.firstinspires.ftc.teamcode.utils.ProfileGenerator;
 
 public class AutoSlowDuckProfileTask extends Task {
 
-    public final double SLIDING_TIME = 0;
-    public final double SLIDING_SETPOINT = 0;
+    final double TRAVELLING_DISTANCE = 12;
+    final double SLIDING_SETPOINT = 20;
+    final double SLIDING_TIME = 0.5;
 
+    final double VELOCITY_CONSTRAINT = 12 ;
+    final double ACCELERATION_CONSTRAINT = 10;
+
+    double direction;
+
+    MotionProfile profile;
     Carousel carousel;
-    Profile profile;
-    DuckState duckState;
-    Clock clock;
-    int multiplier;
 
-    public AutoSlowDuckProfileTask(Carousel carousel, int multiplier) {
+    State state;
+    Clock clock;
+
+    public AutoSlowDuckProfileTask(Carousel carousel, int direction) {
+        this.profile = MotionProfileGenerator.generateMotionProfile(
+                new MotionState(0,0),
+                new MotionState(direction * TRAVELLING_DISTANCE, SLIDING_SETPOINT),
+                (x) -> VELOCITY_CONSTRAINT,
+                (x) -> ACCELERATION_CONSTRAINT
+        );
         this.carousel = carousel;
-        this.profile = new ProfileGenerator(6, 8)
-                .generateProfile(multiplier * 8);
+        this.direction = direction;
         this.clock = new Clock();
-        this.multiplier = multiplier;
     }
 
     @Override
     public void init() {
-        duckState = DuckState.TRAVELLING;
-        carousel.setSetpoint(0);
+        state = State.TRAVELLING;
+        carousel.setSetpoint(profile.start().getV());
         clock.startTiming();
         running = true;
     }
 
     @Override
     public void loop() {
-        switch (duckState) {
+        switch (state) {
             case TRAVELLING:
-                carousel.setSetpoint(profile.getProfileVelocity(clock.getSeconds()));
-                if (profile.isProfileComplete(clock.getSeconds())) {
-                    duckState = DuckState.SLIDING;
+                carousel.setSetpoint(profile.get(clock.getSeconds()).getV());
+                if (clock.getSeconds() > profile.duration()) {
+                    state = State.SLIDING;
                     clock.startTiming();
                 }
                 break;
             case SLIDING:
-                carousel.setSetpoint(multiplier * SLIDING_SETPOINT);
-                if (clock.getSeconds() > SLIDING_TIME) {
+                carousel.setSetpoint(direction * SLIDING_SETPOINT);
+                if (clock.getSeconds() > SLIDING_TIME)
                     running = false;
-                }
                 break;
         }
     }
@@ -58,7 +68,7 @@ public class AutoSlowDuckProfileTask extends Task {
         carousel.setSetpoint(0);
     }
 
-    public enum DuckState {
+    public enum State {
         TRAVELLING, SLIDING
     }
 }
