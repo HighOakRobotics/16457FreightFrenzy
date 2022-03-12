@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
+import org.firstinspires.ftc.teamcode.tasks.AutoSlowDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
@@ -42,8 +43,8 @@ public class AutoBlueCarousel extends SequoiaOpMode {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
                 new FollowTrajectoryTask(mecanum, new Pose2d(-46, 50, Math.PI / 2)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-60, 64, 0)),
-                new LegacyDuckProfileTask(carousel, 1),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-60, 64, -Math.PI / 4)),
+                new AutoSlowDuckProfileTask(carousel, 1),
 
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
@@ -69,8 +70,8 @@ public class AutoBlueCarousel extends SequoiaOpMode {
                 new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0)),
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
 
-                new FollowTrajectoryTask(mecanum, new Pose2d(0, 66, 0)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(50, 66, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(0, 72, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(50, 72, 0)),
                 //new FollowTrajectoryTask(mecanum, new Pose2d(50, 40, 0)),
 
                 // If the first one failed

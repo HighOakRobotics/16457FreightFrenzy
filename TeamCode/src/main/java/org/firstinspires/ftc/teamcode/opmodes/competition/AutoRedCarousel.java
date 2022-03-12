@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DuckDetector;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
+import org.firstinspires.ftc.teamcode.tasks.AutoSlowDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
@@ -45,7 +46,7 @@ public class AutoRedCarousel extends SequoiaOpMode {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
                 new FollowTrajectoryTask(mecanum, new Pose2d(-60, -64, 0)),
-                new LegacyDuckProfileTask(carousel, -1),
+                new AutoSlowDuckProfileTask(carousel, -1),
 
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.utils.AngularServo;
 public class Arm extends Subsystem {
     boolean controlLock;
 
+    DcMotor.RunMode currentRunMode;
+
     DcMotorEx arm;
     DcMotorEx rotator;
     AngularServo wrist;
@@ -67,6 +69,7 @@ public class Arm extends Subsystem {
         rotator.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        currentRunMode = DcMotor.RunMode.RUN_TO_POSITION;
         armTargetPosition = 0;
         rotatorTargetPosition = 0;
         armTargetVelocity = 0;
@@ -120,35 +123,22 @@ public class Arm extends Subsystem {
             case IDLE:
                 arm.setPower(0);
                 rotator.setPower(0);
-                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 break;
             case TARGET_POSITION:
                 arm.setPower(armPositioningTargetPower);
                 rotator.setPower(rotatorPositioningTargetPower);
                 arm.setTargetPosition(armTargetPosition);
                 rotator.setTargetPosition(rotatorTargetPosition);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case TARGET_VELOCITY:
-                if (armTargetVelocity > 0) {
-                    arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    arm.setVelocity(armTargetVelocity);
-                } else {
-                    arm.setTargetPosition(arm.getCurrentPosition());
-                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-                if (rotatorTargetVelocity > 0) {
-                    rotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rotator.setVelocity(rotatorTargetVelocity);
-                } else {
-                    rotator.setTargetPosition(rotator.getCurrentPosition());
-                    rotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
+                arm.setVelocity(armTargetVelocity);
+                rotator.setVelocity(rotatorTargetVelocity);
+                setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
             case TARGET_POWER:
-                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rotator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.setPower(armTargetPower);
                 rotator.setPower(rotatorTargetPower);
                 break;
@@ -200,6 +190,14 @@ public class Arm extends Subsystem {
     @Override
     public void stop() {
 
+    }
+
+    public void setRunMode(DcMotor.RunMode runMode) {
+        if (runMode != currentRunMode) {
+            arm.setMode(runMode);
+            rotator.setMode(runMode);
+            currentRunMode = runMode;
+        }
     }
 
     public boolean controlLocked() {
@@ -277,8 +275,7 @@ public class Arm extends Subsystem {
     }
 
     public void stopAndResetEncoders() {
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void setRotatorTargetPower(double power) {
