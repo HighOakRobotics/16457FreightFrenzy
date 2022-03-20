@@ -14,8 +14,8 @@ public class AutoSlowDuckProfileTask extends Task {
     final double SLIDING_SETPOINT = 20;
     final double SLIDING_TIME = 0.5;
 
-    final double VELOCITY_CONSTRAINT = 12 ;
-    final double ACCELERATION_CONSTRAINT = 10;
+    final double VELOCITY_CONSTRAINT = 10 ;
+    final double ACCELERATION_CONSTRAINT = 8;
 
     double direction;
 
