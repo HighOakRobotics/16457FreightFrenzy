@@ -35,47 +35,19 @@ public class AutoBlueCarousel extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-37, 66, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-60, 60, Math.PI));
     }
 
     @Override
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
-                new FollowTrajectoryTask(mecanum, new Pose2d(-46, 50, Math.PI / 2)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-60, 64, -Math.PI / 4)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-60, 55, Math.PI)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-83, 65, 0)),
                 new AutoSlowDuckProfileTask(carousel, 1),
 
-                new ParallelTaskBundle(
-                        new SequentialTaskBundle(
-                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
-                                new SwitchTask(new HashMap<Object, Task>() {{
-                                    put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 6)
-                                    ));
-                                    put(DuckDetector.DuckPipeline.DuckPosition.CENTER, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 13)
-                                    ));
-                                    put(DuckDetector.DuckPipeline.DuckPosition.RIGHT, new SequentialTaskBundle(
-                                            new ArmTrackingTask(arm, 19)
-                                    ));
-                                }}, () -> position),
-                                new WaitTask(1000, TimeUnit.MILLISECONDS)
-                        ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0))
-                ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-10, 42, 0)),
-                new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
-                new WaitTask(500, TimeUnit.MILLISECONDS),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0)),
-                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-87, 36, Math.PI/2)),
 
-                new FollowTrajectoryTask(mecanum, new Pose2d(0, 72, 0)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(50, 72, 0)),
-                //new FollowTrajectoryTask(mecanum, new Pose2d(50, 40, 0)),
-
-                // If the first one failed
-                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
 
                 new InstantTask(this::requestOpModeStop)
         ));

@@ -39,6 +39,8 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
         gamepad1H.rightTriggerButton(0.01).onPress(new ArmTrackingTask(arm, () -> gamepad1.right_trigger, () -> gamepad1.left_trigger));
 
         gamepad1H.upButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+        gamepad1H.bButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
+        gamepad1H.xButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
         gamepad1H.rightButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
         gamepad1H.leftButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
         gamepad1H.downButton().onPress(new InstantTask(() -> {

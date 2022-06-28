@@ -33,7 +33,7 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(8, 66, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-12, 60, Math.PI));
     }
 
     @Override
