@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
 @Autonomous(group = "Working Title")
-public class AutoBlueWarehouse extends SequoiaOpMode {
+public class AutoBlueMiddle extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(90, 170, 260);
     Mecanum mecanum = new Mecanum();
@@ -38,8 +38,11 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
 
     @Override
     public void runTriggers() {
+
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
+                //insert wait time since there's like no fucking space (????? why game devs???)
+                //new WaitTask(5000, TimeUnit.MILLISECONDS),
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
                                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
@@ -56,17 +59,13 @@ public class AutoBlueWarehouse extends SequoiaOpMode {
                                 }}, () -> position),
                                 new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(-12, 57, 0))
                 ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-10, 42, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(12, 48, 0)),
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
-                new FollowTrajectoryTask(mecanum, new Pose2d(-10, 50, 0)),
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
-
-                new FollowTrajectoryTask(mecanum, new Pose2d(0, 66, 0)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(50, 66, 0)),
-                new FollowTrajectoryTask(mecanum, new Pose2d(50, 40, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(24, 60, 0)),
 
                 // If the first one failed
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
