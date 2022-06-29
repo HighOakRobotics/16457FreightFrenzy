@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.tasks.ArmTrackingTask;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
-@Autonomous(group = "Working Title")
-public class AutoBlueMiddle extends SequoiaOpMode {
+@Autonomous(group = "CRI Blue Auto")
+public class AutoBlueWarehouse extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(90, 170, 260);
     Mecanum mecanum = new Mecanum();
@@ -33,7 +33,7 @@ public class AutoBlueMiddle extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(-12, 60, Math.PI));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(36, 60, Math.PI));
     }
 
     @Override
@@ -59,9 +59,10 @@ public class AutoBlueMiddle extends SequoiaOpMode {
                                 }}, () -> position),
                                 new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(-12, 57, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(36, 57, 0))
                 ),
-                new FollowTrajectoryTask(mecanum, new Pose2d(12, 48, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(12, 40, 0)),
+                //arm?
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
@@ -69,6 +70,8 @@ public class AutoBlueMiddle extends SequoiaOpMode {
 
                 // If the first one failed
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
+                new FollowTrajectoryTask(mecanum, new Pose2d(72, 60, 0)),
+
 
                 new InstantTask(this::requestOpModeStop)
         ));

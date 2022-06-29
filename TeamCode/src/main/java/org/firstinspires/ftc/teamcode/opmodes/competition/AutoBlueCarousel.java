@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.tasks.LegacyDuckProfileTask;
 import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
-@Autonomous(group = "Working Title")
+@Autonomous(group = "CRI Blue Auto")
 public class AutoBlueCarousel extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(70, 160, 250);

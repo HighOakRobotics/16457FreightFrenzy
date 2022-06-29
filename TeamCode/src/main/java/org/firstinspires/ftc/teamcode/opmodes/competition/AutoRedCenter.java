@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.tasks.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.tasks.LegacyGoToArmWaypointTask;
 
 @Autonomous(group = "CRI Blue Auto")
-public class AutoRedWarehouse extends SequoiaOpMode {
+public class AutoRedCenter extends SequoiaOpMode {
 
     DuckDetector duckDetector = new DuckDetector(90, 170, 260);
     Mecanum mecanum = new Mecanum();
@@ -33,7 +33,7 @@ public class AutoRedWarehouse extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(36, -60, 0));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(-12, -60, 0));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AutoRedWarehouse extends SequoiaOpMode {
                                 }}, () -> position),
                                 new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(36, -57, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(-12, -57, 0))
                 ),
                 new FollowTrajectoryTask(mecanum, new Pose2d(12, -40, 0)),
                 //arm?
