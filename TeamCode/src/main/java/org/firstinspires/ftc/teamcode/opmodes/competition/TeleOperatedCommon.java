@@ -7,6 +7,7 @@ import com.ftc11392.sequoia.task.Task;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.arm.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypoint;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmWaypointGraph;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
@@ -39,8 +40,19 @@ public abstract class TeleOperatedCommon extends SequoiaOpMode {
         gamepad1H.rightTriggerButton(0.01).onPress(new ArmTrackingTask(arm, () -> gamepad1.right_trigger, () -> gamepad1.left_trigger));
 
         gamepad1H.upButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
-        gamepad1H.bButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
-        gamepad1H.xButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
+
+        if(arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING){
+            gamepad1H.bButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+        }else{
+            gamepad1H.bButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
+        }
+
+        if(arm.getLastWaypoint() == ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING){
+            gamepad1H.xButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_READY));
+        }else{
+            gamepad1H.xButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
+        }
+        
         gamepad1H.rightButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING));
         gamepad1H.leftButton().onPress(new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING));
         gamepad1H.downButton().onPress(new InstantTask(() -> {
