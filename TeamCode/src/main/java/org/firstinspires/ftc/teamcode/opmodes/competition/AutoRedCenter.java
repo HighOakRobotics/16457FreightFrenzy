@@ -45,7 +45,7 @@ public class AutoRedCenter extends SequoiaOpMode {
                 //new WaitTask(5000, TimeUnit.MILLISECONDS),
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
-                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
+                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING),
                                 new SwitchTask(new HashMap<Object, Task>() {{
                                     put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
                                             new ArmTrackingTask(arm, 6)

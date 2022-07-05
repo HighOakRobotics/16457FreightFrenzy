@@ -42,11 +42,11 @@ public class AutoRedCarousel extends SequoiaOpMode {
     public void runTriggers() {
         DuckDetector.DuckPipeline.DuckPosition position = duckDetector.getAnalysis();
         scheduler.schedule(new SequentialTaskBundle(
-                new FollowTrajectoryTask(mecanum, new Pose2d(-60, -55, Math.PI)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-60, -55, 0)),
                 new FollowTrajectoryTask(mecanum, new Pose2d(-83, -65, 0)),
                 new AutoSlowDuckProfileTask(carousel, 1),
 
-                new FollowTrajectoryTask(mecanum, new Pose2d(-87, -36, Math.PI/2)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(-89, -36, Math.PI/2)),
 
 
                 new InstantTask(this::requestOpModeStop)

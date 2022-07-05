@@ -33,7 +33,7 @@ public class AutoRedWarehouse extends SequoiaOpMode {
 
     @Override
     public void initTriggers() {
-        mecanum.mecanum().setPoseEstimate(new Pose2d(36, -60, 0));
+        mecanum.mecanum().setPoseEstimate(new Pose2d(36, -63, 0));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class AutoRedWarehouse extends SequoiaOpMode {
                 //new WaitTask(5000, TimeUnit.MILLISECONDS),
                 new ParallelTaskBundle(
                         new SequentialTaskBundle(
-                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.RIGHT_TRACKING),
+                                new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.LEFT_TRACKING),
                                 new SwitchTask(new HashMap<Object, Task>() {{
                                     put(DuckDetector.DuckPipeline.DuckPosition.LEFT, new SequentialTaskBundle(
                                             new ArmTrackingTask(arm, 6)
@@ -59,18 +59,18 @@ public class AutoRedWarehouse extends SequoiaOpMode {
                                 }}, () -> position),
                                 new WaitTask(1000, TimeUnit.MILLISECONDS)
                         ),
-                        new FollowTrajectoryTask(mecanum, new Pose2d(36, -57, 0))
+                        new FollowTrajectoryTask(mecanum, new Pose2d(34, -55, 0))
                 ),
                 new FollowTrajectoryTask(mecanum, new Pose2d(12, -40, 0)),
                 //arm?
                 new InstantTask(() -> arm.setGripperState(Arm.GripperState.OPEN)),
                 new WaitTask(500, TimeUnit.MILLISECONDS),
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
-                new FollowTrajectoryTask(mecanum, new Pose2d(24, -60, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(24, -62, 0)),
 
                 // If the first one failed
                 new LegacyGoToArmWaypointTask(arm, ArmWaypointGraph.ArmWaypointName.INTAKE_DOWN_UPRIGHT),
-                new FollowTrajectoryTask(mecanum, new Pose2d(72, -60, 0)),
+                new FollowTrajectoryTask(mecanum, new Pose2d(72, -62, 0)),
 
 
                 new InstantTask(this::requestOpModeStop)
